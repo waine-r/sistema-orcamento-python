@@ -1,18 +1,58 @@
 from banco import carregar_dados, salvar_dados # Importa funções do banco e clientes
 from reportlab.lib.pagesizes import A4  # tamanho da folha
 from reportlab.pdfgen import canvas     # ferramenta para criar PDF
+from reportlab.lib.utils import ImageReader  # permite usar imagem (logo)
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+from datetime import datetime # usado para pegar data atual
+from colorthief import ColorThief
 
-# Função para gerar PDF de um orçamento
 
+def gerar_numero_orcamento(dados):
+    """
+    Gera número no formato:
+    XXYY.AAAA
 
-def gerar_pdf_orcamento():
-    dados = carregar_dados()
+    XX = quantidade de orçamentos no mês atual
+    YY = mês
+    AAAA = ano
+    """
+
+    # Pega data atual
+    agora = datetime.now()
+    ano = agora.year
+    mes = agora.month
+
+    # Se não existir orçamento ainda
+    if "orcamentos" not in dados:
+        quantidade_mes = 1
+    else:
+        quantidade_mes = 0
+
+        # Percorre todos os orçamentos já salvos
+        for orc in dados["orcamentos"]:
+            data = orc.get("data")
+
+            # Se existir data salva
+            if data:
+                data_orc = datetime.strptime(data, "%d/%m/%Y")
+
+                # Verifica se é do mesmo mês e ano
+                if data_orc.month == mes and data_orc.year == ano:
+                    quantidade_mes += 1
+
+        # Soma +1 para o novo orçamento
+        quantidade_mes += 1
+
+    # Formata número final
+    return f"{quantidade_mes:02d}{mes:02d}.{ano}"
+
+cor_principal = colors.HexColor("#2E7D32")  # verde profissional
 
 # Função para criar um novo orçamento
 def criar_orcamento():
     dados = carregar_dados()
 
-    print("DEBUG dados:", dados)
 
     # Verifica se existem clientes cadastrados
     if "clientes" not in dados or len(dados["clientes"]) == 0:
@@ -65,11 +105,17 @@ def criar_orcamento():
     total = sum(item["subtotal"] for item in itens)
 
     # Criando estrutura do orçamento
+    # Gera número do orçamento
+    numero = gerar_numero_orcamento(dados)
+
+    # Cria o orçamento com número e data
     orcamento = {
+        "numero": numero,  # número profissional
+        "data": datetime.now().strftime("%d/%m/%Y"),  # data atual
         "cliente": cliente_escolhido,
         "itens": itens,
         "total": total
-    }
+}
 
     # Se não existir lista de orçamentos, cria
     if "orcamentos" not in dados:
@@ -145,9 +191,16 @@ def excluir_orcamento():
     print(f"Orçamento do cliente {removido['cliente']['nome']} excluído com sucesso!")
 
 def gerar_pdf_orcamento():
-    
-
     dados = carregar_dados()
+
+    # Pegar dados da empresa
+    empresa = dados.get("empresa", {})
+    logo_path = empresa.get("logo")
+    # Define cor baseada na logo
+    cor_principal = pegar_cor_logo(logo_path) if logo_path else colors.HexColor("#2E7D32")
+    # Remove aspas caso existam
+    if logo_path:
+        logo_path = logo_path.replace('"', '')
 
 
 # Verifica se existem orçamentos
@@ -177,60 +230,243 @@ def gerar_pdf_orcamento():
 
     # Cria o PDF
     c = canvas.Canvas(nome_arquivo, pagesize=A4)
-
     largura, altura = A4
 
-    y = altura - 50  # posição inicial no topo
+    # =========================
+    # HEADER PROFISSIONAL
+    # =========================
+
+    y_topo = 800
+
+        # LOGO MAIOR (mais à esquerda)
+    if logo_path:
+        try:
+            logo = ImageReader(logo_path)
+            c.drawImage(
+                logo,
+                0,              # mais à esquerda
+                y_topo - 70,     # um pouco mais baixo
+                width=220,       # 🔥 maior
+                height=110,
+                preserveAspectRatio=True,
+                mask='auto'
+            )
+        except Exception as e:
+            print("Erro logo:", e)
+
+    # DADOS MAIS À DIREITA
+    c.setFont("Helvetica", 10)
+
+    x_info = 250  # 🔥 joga mais para direita
+
+    c.drawString(x_info, y_topo, empresa.get("nome", ""))
+    c.drawString(x_info, y_topo - 15, f"CNPJ: {empresa.get('cnpj', '')}")
+    c.drawString(x_info, y_topo - 30, f"Telefone: {empresa.get('telefone', '')}")
+    c.drawString(x_info, y_topo - 45, f"Endereço: {empresa.get('endereco', '')}")
+
+    # =========================
+    # LINHA SEPARADORA
+    # =========================
+
+    c.setStrokeColor(cor_principal)
+    c.setLineWidth(2)
+
+    c.line(40, 720, largura - 40, 720)
+
+
+    # =========================
+    # BORDA LATERAL
+    # =========================
+
+    c.setFillColor(cor_principal)
+
+   # Forma curva simples
+    c.setFillColor(cor_principal)
+
+        # =========================
+    # BORDA MODERNA (2 cores)
+    # =========================
+
+    # Cor principal
+    c.setFillColor(cor_principal)
+
+    # Faixa principal
+    c.rect(largura - 80, 0, 80, altura, fill=1)
+
+    # Segunda cor (mais clara)
+    # =========================
+# CÍRCULO BRANCO (recorte)
+# =========================
+
+    c.setFillColor(colors.white)  # 🔥 branco igual fundo
+
+    c.circle(
+        largura,          # encostado na direita
+        altura / 2,       # centralizado verticalmente
+        200,              # tamanho da bola
+        fill=1,
+        stroke=0          # 🔥 sem borda
+    )
+
+ 
 
     # Título
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(50, y, "ORÇAMENTO")
-    y -= 30
+    c.setFillColor(cor_principal)
+    c.setFont("Helvetica-Bold", 18)
+    
+        # Número e data do orçamento
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica", 10)
 
-    # Dados da empresa (se existir)
-    if "empresa" in dados:
-        empresa = dados["empresa"]
+    c.setFillColor(cor_principal)
+    c.setFont("Helvetica-Bold", 18)
 
-        c.setFont("Helvetica", 10)
-        c.drawString(50, y, f"Empresa: {empresa['nome']}")
-        y -= 15
-        c.drawString(50, y, f"CNPJ: {empresa['cnpj']}")
-        y -= 15
-        c.drawString(50, y, f"Telefone: {empresa['telefone']}")
-        y -= 20
+    # Junta título + número
+    titulo = f"ORÇAMENTO {orcamento.get('numero', '')}"    
 
-    # Dados do cliente
-    cliente = orcamento["cliente"]
+    c.setFont("Helvetica-Bold", 20)
+    c.setFillColor(cor_principal)
 
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y, "Cliente:")
+    c.drawString(50, 690, titulo)
+    
+    c.setFillColor(colors.black)  # volta ao normal
+
+    c.setFont("Helvetica", 11)
+
+# =========================
+# CAIXA CLIENTE
+# =========================
+
+    c.setStrokeColor(colors.grey)
+    c.setLineWidth(1)
+
+    # desenha a caixa
+    c.rect(40, 610, largura - 120, 70)                
+        
+        
+        # =========================
+    # BLOCO CLIENTE
+    # =========================
+
+    y = 665  # posição inicial
+
+    c.setFont("Helvetica", 11)
+
+    c.drawString(50, y, f"Cliente: {orcamento['cliente']['nome']}")
     y -= 15
+
+    c.drawString(50, y, f"Telefone: {orcamento['cliente']['telefone']}")
+    y -= 15
+
+    c.drawString(50, y, f"Email: {orcamento['cliente']['email']}")
+    y -= 15
+
+    c.drawString(50, y, f"Endereço: {orcamento['cliente']['endereco']}")
+    y -= 25  # espaço maior antes da mensagem
 
     c.setFont("Helvetica", 10)
-    c.drawString(50, y, f"Nome: {cliente['nome']}")
+
+        # =========================
+    # MENSAGEM
+    # =========================
+
+    c.setFont("Helvetica", 10)
+
+    c.drawString(50, y, "Prezado cliente,")
     y -= 15
-    c.drawString(50, y, f"Telefone: {cliente['telefone']}")
+
+    c.drawString(50, y, "Agradecemos pela oportunidade de apresentar nosso orçamento.")
+    y -= 15
+
+    c.drawString(50, y, "Estamos à disposição para quaisquer dúvidas ou ajustes necessários.")
+    y -= 25
+
+    # =========================
+    # TABELA
+    # =========================
+
+        # Título da tabela
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(50, y, "Itens do orçamento:")
     y -= 20
 
-    # Itens
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y, "Itens:")
-    y -= 15
-
     c.setFont("Helvetica", 10)
 
+    # Dados da tabela
+    dados_tabela = [["Serviço", "Qtd", "Unidade", "V. Unitário", "Total"]]
+
     for item in orcamento["itens"]:
-        texto = f"{item['descricao']} - {item['quantidade']} {item['unidade']} - R$ {item['subtotal']:.2f}"
-        c.drawString(50, y, texto)
-        y -= 15
+        dados_tabela.append([
+            item["descricao"],
+            formatar_numero(item["quantidade"]),
+            item["unidade"],
+            formatar_moeda(item['valor_unitario']),
+            formatar_moeda(item['subtotal'])
+        ])
 
-    y -= 10
+    tabela = Table(dados_tabela, colWidths=[180, 50, 60, 100, 100])
 
-    # Total
+    tabela.setStyle(TableStyle([
+    # Cabeçalho
+    ('BACKGROUND', (0,0), (-1,0), cor_principal),
+    ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+    ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+    ('ALIGN', (1,1), (-1,-1), 'CENTER'),
+
+    # Linhas
+    ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+    ('BACKGROUND', (0,1), (-1,-1), colors.whitesmoke),
+
+]))
+    
+    tabela.wrapOn(c, largura, altura)
+    tabela.drawOn(c, 50, y - 120)
+
+        # Caixa de destaque do total
+    pos_y_total = y - 160
+
+    c.setFillColor(cor_principal)
+    c.rect(350, pos_y_total, 150, 30, fill=1)
+
+    c.setFillColor(colors.white)
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y, f"TOTAL: R$ {orcamento['total']:.2f}")
+    c.drawString(360, pos_y_total + 10, f"TOTAL: {formatar_moeda(orcamento['total'])}")
 
-    # Salva o PDF
+    print("Logo path:", logo_path)
+
+        # =========================
+    # FINALIZAÇÃO DO PDF
+    # =========================
+
     c.save()
 
     print(f"PDF gerado com sucesso: {nome_arquivo}")
+
+def pegar_cor_logo(caminho_logo):
+    """
+    Extrai a cor principal da logo
+    """
+    try:
+        color_thief = ColorThief(caminho_logo)
+        r, g, b = color_thief.get_color(quality=1)
+
+        # Converte para padrão do reportlab (0 a 1)
+        return colors.Color(r/255, g/255, b/255)
+
+    except:
+        # fallback (verde padrão)
+        return colors.HexColor("#2E7D32")
+
+def formatar_moeda(valor):
+    """
+    Converte 22500.00 → R$ 22.500,00
+    """
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def formatar_numero(valor):
+    """
+    Converte 150.0 → 150,00
+    """
+    return f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
