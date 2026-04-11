@@ -411,7 +411,9 @@ def gerar_pdf_orcamento():
     ('BACKGROUND', (0,0), (-1,0), cor_principal),
     ('TEXTCOLOR', (0,0), (-1,0), colors.white),
     ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-    ('ALIGN', (1,1), (-1,-1), 'CENTER'),
+    # Alinhamento das colunas
+    ('ALIGN', (1,1), (2,-1), 'CENTER'),   # quantidade + unidade
+    ('ALIGN', (3,1), (-1,-1), 'RIGHT'),   # valores à direita
 
     # Linhas
     ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
@@ -426,11 +428,15 @@ def gerar_pdf_orcamento():
     pos_y_total = y - 160
 
     c.setFillColor(cor_principal)
-    c.rect(350, pos_y_total, 150, 30, fill=1)
+    c.rect(330, pos_y_total, 170, 35, fill=1)
 
     c.setFillColor(colors.white)
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(360, pos_y_total + 10, f"TOTAL: {formatar_moeda(orcamento['total'])}")
+    c.setFont("Helvetica-Bold", 13)
+    c.drawRightString(
+    490,
+    pos_y_total + 10,
+    f"TOTAL: {formatar_moeda(orcamento['total'])}"
+)
 
     print("Logo path:", logo_path)
 
