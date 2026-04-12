@@ -246,6 +246,8 @@ def gerar_pdf_orcamento():
     # Cria o PDF
     c = canvas.Canvas(nome_arquivo, pagesize=A4)
     largura, altura = A4
+    margem_esquerda = 40
+    margem_direita = largura - 40
 
     # =========================
     # HEADER PROFISSIONAL
@@ -286,7 +288,10 @@ def gerar_pdf_orcamento():
     c.setStrokeColor(cor_principal)
     c.setLineWidth(2)
 
-    c.line(40, 720, largura - 40, 720)
+    c.setStrokeColor(cor_principal)
+    c.setLineWidth(2)
+
+    c.line(margem_esquerda, 720, margem_direita, 720)
 
 
     # =========================
@@ -507,7 +512,10 @@ def gerar_pdf_orcamento():
     c.setLineWidth(1)
 
     # linha separadora
-    c.line(40, 100, largura - 40, 100)
+    c.setStrokeColor(cor_principal)  # mesma cor do header
+    c.setLineWidth(2)                # mesma espessura
+
+    c.line(margem_esquerda, 100, margem_direita, 100)
 
     # texto do rodapé
     c.setFillColor(colors.black)
