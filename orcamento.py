@@ -501,28 +501,33 @@ def gerar_pdf_orcamento():
 
             y_topo = 800
 
+            #LOGO
             if logo_path:
                 try:
                     logo = ImageReader(logo_path)
                     c.drawImage(
                         logo,
-                        col_esquerda,
-                        y_topo - 60,
-                        width=200,
-                        height=100,
+                        0,
+                        y_topo - 70,
+                        width=220,
+                        height=110,
                         preserveAspectRatio=True,
                         mask='auto'
                     )
                 except:
                     pass
 
+            # 🔥 IMPORTANTE: reset de cor e fonte
+            c.setFillColor(colors.black)
             c.setFont("Helvetica", 10)
 
+            #DADOS DA EMPRESA
             c.drawString(col_meio, y_topo, empresa.get("nome", ""))
             c.drawString(col_meio, y_topo - 15, f"CNPJ: {empresa.get('cnpj', '')}")
             c.drawString(col_meio, y_topo - 30, f"Telefone: {empresa.get('telefone', '')}")
             c.drawString(col_meio, y_topo - 45, f"Endereço: {empresa.get('endereco', '')}")
 
+            #LINHA HEADER
             c.setStrokeColor(cor_principal)
             c.setLineWidth(2)
             c.line(margem_esquerda, 720, margem_direita, 720)
