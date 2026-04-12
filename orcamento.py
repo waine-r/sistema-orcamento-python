@@ -475,6 +475,26 @@ def gerar_pdf_orcamento():
         if y_tabela < 150:
             c.showPage()
 
+                        # =========================
+            # BORDA LATERAL (RECRIAR)
+            # =========================
+
+            c.setFillColor(cor_principal)
+
+            # faixa lateral
+            c.rect(largura - 80, 0, 80, altura, fill=1)
+
+            # círculo branco
+            c.setFillColor(colors.white)
+
+            c.circle(
+                largura,
+                altura / 2,
+                200,
+                fill=1,
+                stroke=0
+            )
+
              # =========================
             # RECRIA HEADER
             # =========================
@@ -511,7 +531,7 @@ def gerar_pdf_orcamento():
             # RECRIA CABEÇALHO DA TABELA
             # =========================
 
-            y_tabela = altura - 120
+            y_tabela = 680
 
             c.setFillColor(cor_principal)
             c.rect(col_esquerda, y_tabela, largura_util, 20, fill=1)
