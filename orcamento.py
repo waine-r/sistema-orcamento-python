@@ -104,6 +104,17 @@ def criar_orcamento():
     # Cálculo do total
     total = sum(item["subtotal"] for item in itens)
 
+        # =========================
+    # INFORMAÇÕES ADICIONAIS
+    # =========================
+
+    print("\n=== INFORMAÇÕES DO ORÇAMENTO ===")
+
+    forma_pagamento = input("Forma de pagamento: ")
+    prazo_execucao = input("Prazo de execução: ")
+    observacoes = input("Observações: ")
+    validade = input("Validade do orçamento (ex: 15 dias): ")
+
     # Criando estrutura do orçamento
     # Gera número do orçamento
     numero = gerar_numero_orcamento(dados)
@@ -114,7 +125,11 @@ def criar_orcamento():
         "data": datetime.now().strftime("%d/%m/%Y"),  # data atual
         "cliente": cliente_escolhido,
         "itens": itens,
-        "total": total
+        "total": total,
+        "forma_pagamento": forma_pagamento,
+        "prazo_execucao": prazo_execucao,
+        "observacoes": observacoes,
+        "validade": validade,
 }
 
     # Se não existir lista de orçamentos, cria
@@ -473,16 +488,16 @@ def gerar_pdf_orcamento():
     c.setFillColor(colors.black)
     c.setFont("Helvetica", 10)
 
-    c.drawString(50, y_info, "Forma de pagamento: Entrada + restante na conclusão")
+    c.drawString(50, y_info, f"Forma de pagamento: {orcamento.get('forma_pagamento', '')}")
     y_info -= 15
 
-    c.drawString(50, y_info, "Prazo de execução: 30 dias após aprovação")
+    c.drawString(50, y_info, f"Prazo de execução: {orcamento.get('prazo_execucao', '')}")
     y_info -= 15
 
-    c.drawString(50, y_info, "Observações: Materiais não inclusos (se aplicável)")
+    c.drawString(50, y_info, f"Observações: {orcamento.get('observacoes', '')}")
     y_info -= 15
 
-    c.drawString(50, y_info, "Validade do orçamento: 15 dias")
+    c.drawString(50, y_info, f"Validade do orçamento: {orcamento.get('validade', '')}")
     
     # =========================
 # RODAPÉ
@@ -501,10 +516,7 @@ def gerar_pdf_orcamento():
     cidade = "Juiz de Fora"  # depois podemos puxar automático
 
     c.drawString(50, 80, f"{cidade}, {orcamento.get('data', '')}")
-    c.drawString(50, 65, "Orçamento válido por 15 dias")
-
-
-        
+           
         
         
         # =========================
