@@ -7,7 +7,6 @@ from reportlab.lib import colors
 from datetime import datetime # usado para pegar data atual
 from colorthief import ColorThief
 
-
 def gerar_numero_orcamento(dados):
     """
     Gera número no formato:
@@ -472,47 +471,58 @@ def gerar_pdf_orcamento():
         if y_tabela < 120:
             c.showPage()
 
-            # 🔥 recria layout básico da nova página
+             # =========================
+            # RECRIA HEADER
+            # =========================
+
+            y_topo = 800
+
+            if logo_path:
+                try:
+                    logo = ImageReader(logo_path)
+                    c.drawImage(
+                        logo,
+                        col_esquerda,
+                        y_topo - 60,
+                        width=200,
+                        height=100,
+                        preserveAspectRatio=True,
+                        mask='auto'
+                    )
+                except:
+                    pass
+
             c.setFont("Helvetica", 10)
 
-            y_tabela = altura - 100  # topo da nova página
+            c.drawString(col_meio, y_topo, empresa.get("nome", ""))
+            c.drawString(col_meio, y_topo - 15, f"CNPJ: {empresa.get('cnpj', '')}")
+            c.drawString(col_meio, y_topo - 30, f"Telefone: {empresa.get('telefone', '')}")
+            c.drawString(col_meio, y_topo - 45, f"Endereço: {empresa.get('endereco', '')}")
 
-        # desenha linha
-        c.setFillColor(colors.black)
+            c.setStrokeColor(cor_principal)
+            c.setLineWidth(2)
+            c.line(margem_esquerda, 720, margem_direita, 720)
 
-        c.drawString(col_esquerda + 5, y_tabela, item["descricao"])
-        c.drawString(col_esquerda + 180, y_tabela, formatar_numero(item["quantidade"]))
-        c.drawString(col_esquerda + 230, y_tabela, item["unidade"])
-        c.drawString(col_esquerda + 300, y_tabela, formatar_moeda(item["valor_unitario"]))
-        c.drawString(col_esquerda + 400, y_tabela, formatar_moeda(item["subtotal"]))
+            # =========================
+            # RECRIA CABEÇALHO DA TABELA
+            # =========================
 
-        y_tabela -= 20
+            y_tabela = altura - 120
+
+            c.setFillColor(cor_principal)
+            c.rect(col_esquerda, y_tabela, largura_util, 20, fill=1)
+
+            c.setFillColor(colors.white)
+
+            c.drawString(col_esquerda + 5, y_tabela + 5, "Serviço")
+            c.drawString(col_esquerda + 180, y_tabela + 5, "Qtd")
+            c.drawString(col_esquerda + 230, y_tabela + 5, "Unidade")
+            c.drawString(col_esquerda + 300, y_tabela + 5, "V. Unitário")
+            c.drawString(col_esquerda + 400, y_tabela + 5, "Total")
+
+            y_tabela -= 20          
 
 
-
-    tabela.setStyle(TableStyle([
-    # Cabeçalho
-    ('BACKGROUND', (0,0), (-1,0), cor_principal),
-    ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-    ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-    # Alinhamento das colunas
-    ('ALIGN', (1,1), (2,-1), 'CENTER'),   # quantidade + unidade
-    ('ALIGN', (3,1), (-1,-1), 'LEFT'),   # valores à Esquerda
-
-    # Linhas
-    ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-    ('BACKGROUND', (0,1), (-1,-1), colors.whitesmoke),
-
-]))
-    
-    # Calcula tamanho da tabela
-    tabela.wrapOn(c, largura, altura)
-
-# pega altura real da tabela
-    altura_tabela = tabela._height
-
-# desenha respeitando o conteúdo acima
-    tabela.drawOn(c, col_esquerda, y - altura_tabela)
 
     # limite visual à direita (segurança)
     limite_direito = largura - 100
