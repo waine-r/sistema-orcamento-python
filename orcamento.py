@@ -166,7 +166,7 @@ def listar_orcamentos():
         print("Itens:")
 
         # Percorre os itens do orçamento
-        for item in orcamento["itens"]:
+        for i, item in enumerate(orcamento["itens"]):
             print(f"- {item['descricao']} | {item['quantidade']} {item['unidade']} | R$ {item['subtotal']:.2f}")
 
 # Função para excluir um orçamento
@@ -429,7 +429,7 @@ def gerar_pdf_orcamento():
     # Dados da tabela
     dados_tabela = [["Serviço", "Qtd", "Unidade", "V. Unitário", "Total"]]
 
-    for item in orcamento["itens"]:
+    for i, item in enumerate(orcamento["itens"]):
         dados_tabela.append([
             item["descricao"],
             formatar_numero(item["quantidade"]),
@@ -469,7 +469,7 @@ def gerar_pdf_orcamento():
     if y_tabela < 200:
         y_tabela = altura - 150
 
-    for item in orcamento["itens"]:
+    for i, item in enumerate(orcamento["itens"]):
 
         # 🔥 verifica se chegou no fim da página
         if y_tabela < 150:
@@ -549,7 +549,37 @@ def gerar_pdf_orcamento():
             c.drawString(col_esquerda + 300, y_tabela + 5, "V. Unitário")
             c.drawString(col_esquerda + 400, y_tabela + 5, "Total")
 
-            y_tabela -= 20          
+            y_tabela -= 20       
+
+                    # =========================
+        # 🔥 FUNDO ZEBRA (AQUI)
+        # =========================
+        if i % 2 == 0:
+            c.setFillColor(colors.whitesmoke)
+            c.rect(col_esquerda, y_tabela - 2, largura_util, 20, fill=1)
+
+        # volta para texto
+        c.setFillColor(colors.black)
+
+        # =========================
+        # 🔥 AQUI FICAM SEUS drawString
+        # =========================
+
+        c.drawString(col_esquerda + 5, y_tabela, item["descricao"])
+        c.drawString(col_esquerda + 180, y_tabela, formatar_numero(item["quantidade"]))
+        c.drawString(col_esquerda + 230, y_tabela, item["unidade"])
+        c.drawString(col_esquerda + 300, y_tabela, formatar_moeda(item["valor_unitario"]))
+        c.drawString(col_esquerda + 400, y_tabela, formatar_moeda(item["subtotal"]))
+
+        # =========================
+        # 🔥 LINHA SEPARADORA (AQUI)
+        # =========================
+        c.setStrokeColor(colors.lightgrey)
+        c.setLineWidth(0.5)
+        c.line(col_esquerda, y_tabela - 5, col_direita, y_tabela - 5)
+
+        y_tabela -= 20
+
 
     # =========================
         # 🔥 DESENHAR ITEM (ESSA PARTE FALTAVA)
