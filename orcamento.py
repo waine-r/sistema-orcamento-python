@@ -581,20 +581,6 @@ def gerar_pdf_orcamento():
         y_tabela -= 20
 
 
-    # =========================
-        # 🔥 DESENHAR ITEM (ESSA PARTE FALTAVA)
-        # =========================
-
-        c.setFillColor(colors.black)
-
-        c.drawString(col_esquerda + 5, y_tabela, item["descricao"])
-        c.drawString(col_esquerda + 180, y_tabela, formatar_numero(item["quantidade"]))
-        c.drawString(col_esquerda + 230, y_tabela, item["unidade"])
-        c.drawString(col_esquerda + 300, y_tabela, formatar_moeda(item["valor_unitario"]))
-        c.drawString(col_esquerda + 400, y_tabela, formatar_moeda(item["subtotal"]))
-
-        y_tabela -= 20
-
     # limite visual à direita (segurança)
     limite_direito = largura - 100
 
