@@ -249,6 +249,21 @@ def gerar_pdf_orcamento():
     margem_esquerda = 40
     margem_direita = largura - 40
 
+        # =========================
+    # GRID DO DOCUMENTO
+    # =========================
+
+    margem_esquerda = 40
+    margem_direita = largura - 40
+
+    # largura útil (sem faixa direita)
+    largura_util = largura - 120
+
+    # colunas base
+    col_esquerda = margem_esquerda
+    col_meio = margem_esquerda + (largura_util * 0.5)
+    col_direita = margem_esquerda + largura_util
+
     # =========================
     # HEADER PROFISSIONAL
     # =========================
@@ -274,7 +289,7 @@ def gerar_pdf_orcamento():
     # DADOS MAIS À DIREITA
     c.setFont("Helvetica", 10)
 
-    x_info = 250  # 🔥 joga mais para direita
+    x_info = col_meio
 
     c.drawString(x_info, y_topo, empresa.get("nome", ""))
     c.drawString(x_info, y_topo - 15, f"CNPJ: {empresa.get('cnpj', '')}")
@@ -347,7 +362,7 @@ def gerar_pdf_orcamento():
     c.setFont("Helvetica-Bold", 20)
     c.setFillColor(cor_principal)
 
-    c.drawString(50, 690, titulo)
+    c.drawString(col_esquerda, 690, titulo)
     
     c.setFillColor(colors.black)  # volta ao normal
 
@@ -361,7 +376,7 @@ def gerar_pdf_orcamento():
     c.setLineWidth(1)
 
     # desenha a caixa
-    c.rect(48, 610, largura - 130, 70)                
+    c.rect(col_esquerda, 610, largura - 120, 70)                
         
         
         # =========================
@@ -372,16 +387,16 @@ def gerar_pdf_orcamento():
 
     c.setFont("Helvetica", 11)
 
-    c.drawString(50, y, f"Cliente: {orcamento['cliente']['nome']}")
+    c.drawString(44, y, f"Cliente: {orcamento['cliente']['nome']}")
     y -= 15
 
-    c.drawString(50, y, f"Telefone: {orcamento['cliente']['telefone']}")
+    c.drawString(44, y, f"Telefone: {orcamento['cliente']['telefone']}")
     y -= 15
 
-    c.drawString(50, y, f"Email: {orcamento['cliente']['email']}")
+    c.drawString(44, y, f"Email: {orcamento['cliente']['email']}")
     y -= 15
 
-    c.drawString(50, y, f"Endereço: {orcamento['cliente']['endereco']}")
+    c.drawString(44, y, f"Endereço: {orcamento['cliente']['endereco']}")
     y -= 25  # espaço maior antes da mensagem
 
     c.setFont("Helvetica", 10)
@@ -392,13 +407,13 @@ def gerar_pdf_orcamento():
 
     c.setFont("Helvetica", 10)
 
-    c.drawString(50, y, "Prezado cliente,")
+    c.drawString(col_esquerda, y, "Prezado cliente,")
     y -= 15
 
-    c.drawString(50, y, "Agradecemos pela oportunidade de apresentar nosso orçamento.")
+    c.drawString(col_esquerda, y, "Agradecemos pela oportunidade de apresentar nosso orçamento.")
     y -= 15
 
-    c.drawString(50, y, "Estamos à disposição para quaisquer dúvidas ou ajustes necessários.")
+    c.drawString(col_esquerda, y, "Estamos à disposição para quaisquer dúvidas ou ajustes necessários.")
     y -= 25
 
     # =========================
@@ -407,7 +422,7 @@ def gerar_pdf_orcamento():
 
         # Título da tabela
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(50, y, "Itens do orçamento:")
+    c.drawString(col_esquerda, y, "Itens do orçamento:")
     y -= 20
 
     c.setFont("Helvetica", 10)
@@ -463,7 +478,7 @@ def gerar_pdf_orcamento():
     altura_tabela = tabela._height
 
 # desenha respeitando o conteúdo acima
-    tabela.drawOn(c, 50, y - altura_tabela)
+    tabela.drawOn(c, col_esquerda, y - altura_tabela)
 
     # limite visual à direita (segurança)
     limite_direito = largura - 100
@@ -471,16 +486,25 @@ def gerar_pdf_orcamento():
         # Caixa de destaque do total
     pos_y_total = y - altura_tabela - 50
 
+    # =========================
+# TOTAL ALINHADO NO GRID
+# =========================
+
+    largura_total_box = 170
+
+    x_total = col_direita - largura_total_box  # 🔥 alinha com grid
+
     c.setFillColor(cor_principal)
-    c.rect(330, pos_y_total, 170, 35, fill=1)
+    c.rect(x_total, pos_y_total, largura_total_box, 35, fill=1)
 
     c.setFillColor(colors.white)
     c.setFont("Helvetica-Bold", 13)
+
     c.drawRightString(
-    490,
-    pos_y_total + 10,
-    f"TOTAL: {formatar_moeda(orcamento['total'])}"
-)
+        col_direita - 10,  # 🔥 alinhado com borda do grid
+        pos_y_total + 10,
+        f"TOTAL: {formatar_moeda(orcamento['total'])}"
+    )
 
     print("Logo path:", logo_path)
     
