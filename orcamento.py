@@ -445,16 +445,50 @@ def gerar_pdf_orcamento():
 
     largura_util = largura - 120  # espaço da página menos margem + faixa
 
-    tabela = Table(
-        dados_tabela,
-        colWidths=[
-            largura_util * 0.35,  # descrição
-            largura_util * 0.10,  # quantidade
-            largura_util * 0.10,  # unidade
-            largura_util * 0.20,  # valor unitário
-            largura_util * 0.25   # total
-        ]
-    )
+        # =========================
+    # TABELA MANUAL (COM QUEBRA)
+    # =========================
+
+    y_tabela = y  # começa abaixo do título
+
+    c.setFont("Helvetica", 10)
+
+    # Cabeçalho
+    c.setFillColor(cor_principal)
+    c.rect(col_esquerda, y_tabela, largura_util, 20, fill=1)
+
+    c.setFillColor(colors.white)
+    c.drawString(col_esquerda + 5, y_tabela + 5, "Serviço")
+    c.drawString(col_esquerda + 180, y_tabela + 5, "Qtd")
+    c.drawString(col_esquerda + 230, y_tabela + 5, "Unidade")
+    c.drawString(col_esquerda + 300, y_tabela + 5, "V. Unitário")
+    c.drawString(col_esquerda + 400, y_tabela + 5, "Total")
+
+    y_tabela -= 20
+
+    for item in orcamento["itens"]:
+
+        # 🔥 verifica se chegou no fim da página
+        if y_tabela < 120:
+            c.showPage()
+
+            # 🔥 recria layout básico da nova página
+            c.setFont("Helvetica", 10)
+
+            y_tabela = altura - 100  # topo da nova página
+
+        # desenha linha
+        c.setFillColor(colors.black)
+
+        c.drawString(col_esquerda + 5, y_tabela, item["descricao"])
+        c.drawString(col_esquerda + 180, y_tabela, formatar_numero(item["quantidade"]))
+        c.drawString(col_esquerda + 230, y_tabela, item["unidade"])
+        c.drawString(col_esquerda + 300, y_tabela, formatar_moeda(item["valor_unitario"]))
+        c.drawString(col_esquerda + 400, y_tabela, formatar_moeda(item["subtotal"]))
+
+        y_tabela -= 20
+
+
 
     tabela.setStyle(TableStyle([
     # Cabeçalho
@@ -484,7 +518,7 @@ def gerar_pdf_orcamento():
     limite_direito = largura - 100
 
         # Caixa de destaque do total
-    pos_y_total = y - altura_tabela - 50
+    pos_y_total = y_tabela - 30
 
     # =========================
 # TOTAL ALINHADO NO GRID
