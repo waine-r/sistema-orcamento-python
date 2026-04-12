@@ -306,6 +306,7 @@ def gerar_pdf_orcamento():
     c.setLineWidth(2)
 
     c.line(margem_esquerda, 720, margem_direita, 720)
+    c.setStrokeColor(colors.black)
 
 
     # =========================
@@ -406,7 +407,7 @@ def gerar_pdf_orcamento():
 
     c.setFont("Helvetica", 10)
 
-    c.drawString(col_esquerda, y, "Prezado cliente,")
+    c.drawString(col_esquerda, y, "Prezado (a) Sr (a),")
     y -= 15
 
     c.drawString(col_esquerda, y, "Agradecemos pela oportunidade de apresentar nosso orçamento.")
@@ -471,6 +472,8 @@ def gerar_pdf_orcamento():
 
     for i, item in enumerate(orcamento["itens"]):
 
+        c.setFillColor(colors.black)  # 🔥 reset ANTES de tudo
+
         # 🔥 verifica se chegou no fim da página
         if y_tabela < 150:
             c.showPage()
@@ -532,6 +535,8 @@ def gerar_pdf_orcamento():
             c.setLineWidth(2)
             c.line(margem_esquerda, 720, margem_direita, 720)
 
+            c.setStrokeColor(colors.black)  # 🔥 CORREÇÃO DEFINITIVA
+
             # =========================
             # RECRIA CABEÇALHO DA TABELA
             # =========================
@@ -549,15 +554,12 @@ def gerar_pdf_orcamento():
             c.drawString(col_esquerda + 300, y_tabela + 5, "V. Unitário")
             c.drawString(col_esquerda + 400, y_tabela + 5, "Total")
 
-            y_tabela -= 20       
+            c.setFillColor(colors.black)  # 🔥 reset obrigatório  
+            y_tabela -= 20
 
                     # =========================
         # 🔥 FUNDO ZEBRA (AQUI)
         # =========================
-        if i % 2 == 0:
-            c.setFillColor(colors.whitesmoke)
-            c.rect(col_esquerda, y_tabela - 2, largura_util, 20, fill=1)
-
         # volta para texto
         c.setFillColor(colors.black)
 
