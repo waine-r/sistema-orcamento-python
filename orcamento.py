@@ -341,7 +341,7 @@ def gerar_pdf_orcamento():
     c.setLineWidth(1)
 
     # desenha a caixa
-    c.rect(40, 610, largura - 120, 70)                
+    c.rect(48, 610, largura - 130, 70)                
         
         
         # =========================
@@ -404,7 +404,22 @@ def gerar_pdf_orcamento():
             formatar_moeda(item['subtotal'])
         ])
 
-    tabela = Table(dados_tabela, colWidths=[180, 50, 60, 100, 100])
+    # =========================
+# LARGURA SEGURA DA TABELA
+# =========================
+
+    largura_util = largura - 120  # espaço da página menos margem + faixa
+
+    tabela = Table(
+        dados_tabela,
+        colWidths=[
+            largura_util * 0.35,  # descrição
+            largura_util * 0.10,  # quantidade
+            largura_util * 0.10,  # unidade
+            largura_util * 0.20,  # valor unitário
+            largura_util * 0.25   # total
+        ]
+    )
 
     tabela.setStyle(TableStyle([
     # Cabeçalho
@@ -413,7 +428,7 @@ def gerar_pdf_orcamento():
     ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
     # Alinhamento das colunas
     ('ALIGN', (1,1), (2,-1), 'CENTER'),   # quantidade + unidade
-    ('ALIGN', (3,1), (-1,-1), 'RIGHT'),   # valores à direita
+    ('ALIGN', (3,1), (-1,-1), 'LEFT'),   # valores à Esquerda
 
     # Linhas
     ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
@@ -421,11 +436,20 @@ def gerar_pdf_orcamento():
 
 ]))
     
+    # Calcula tamanho da tabela
     tabela.wrapOn(c, largura, altura)
-    tabela.drawOn(c, 50, y - 120)
+
+# pega altura real da tabela
+    altura_tabela = tabela._height
+
+# desenha respeitando o conteúdo acima
+    tabela.drawOn(c, 50, y - altura_tabela)
+
+    # limite visual à direita (segurança)
+    limite_direito = largura - 100
 
         # Caixa de destaque do total
-    pos_y_total = y - 160
+    pos_y_total = y - altura_tabela - 50
 
     c.setFillColor(cor_principal)
     c.rect(330, pos_y_total, 170, 35, fill=1)
@@ -439,7 +463,50 @@ def gerar_pdf_orcamento():
 )
 
     print("Logo path:", logo_path)
+    
+    # =========================
+# INFORMAÇÕES DO ORÇAMENTO
+# =========================
 
+    y_info = pos_y_total - 40  # começa abaixo do total
+
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica", 10)
+
+    c.drawString(50, y_info, "Forma de pagamento: Entrada + restante na conclusão")
+    y_info -= 15
+
+    c.drawString(50, y_info, "Prazo de execução: 30 dias após aprovação")
+    y_info -= 15
+
+    c.drawString(50, y_info, "Observações: Materiais não inclusos (se aplicável)")
+    y_info -= 15
+
+    c.drawString(50, y_info, "Validade do orçamento: 15 dias")
+    
+    # =========================
+# RODAPÉ
+# =========================
+
+    c.setStrokeColor(colors.grey)
+    c.setLineWidth(1)
+
+    # linha separadora
+    c.line(40, 100, largura - 40, 100)
+
+    # texto do rodapé
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica", 10)
+
+    cidade = "Juiz de Fora"  # depois podemos puxar automático
+
+    c.drawString(50, 80, f"{cidade}, {orcamento.get('data', '')}")
+    c.drawString(50, 65, "Orçamento válido por 15 dias")
+
+
+        
+        
+        
         # =========================
     # FINALIZAÇÃO DO PDF
     # =========================
