@@ -7,6 +7,7 @@ from reportlab.lib import colors
 from datetime import datetime # usado para pegar data atual
 from colorthief import ColorThief
 from calculos import calcular_subtotal, calcular_total  # importa funções de cálculo
+from utils import ler_int, ler_float, escolher_opcao  # importa validações
 
 def gerar_numero_orcamento(dados):
     """
@@ -68,7 +69,7 @@ def criar_orcamento():
         print(f"{i + 1} - {cliente['nome']}")
 
     # Usuário escolhe cliente
-    escolha = int(input("Digite o número do cliente: ")) - 1
+    escolha = escolher_opcao(dados["clientes"], "Digite o número do cliente: ")
 
     cliente_escolhido = dados["clientes"][escolha]
 
@@ -80,8 +81,8 @@ def criar_orcamento():
 
         descricao = input("Descrição do serviço: ")
         unidade = input("Unidade (m², un, m...): ")
-        quantidade = float(input("Quantidade: "))
-        valor_unitario = float(input("Valor unitário: "))
+        quantidade = ler_float("Quantidade: ")
+        valor_unitario = ler_float("Valor unitário: ")
 
         # Calcula subtotal
         subtotal = calcular_subtotal(quantidade, valor_unitario)  # usa função externa
@@ -190,7 +191,7 @@ def excluir_orcamento():
         print("\nDigite o número do orçamento e pressione ENTER")
 
     # Usuário escolhe qual excluir
-    escolha = int(input("Digite o número do orçamento que deseja excluir: ")) - 1
+    escolha = escolher_opcao(dados["orcamentos"], "Digite o número do orçamento que deseja excluir: ")
 
     # Verifica se a escolha é válida
     if escolha < 0 or escolha >= len(dados["orcamentos"]):
@@ -232,7 +233,7 @@ def gerar_pdf_orcamento():
 
         print(f"{i + 1} - {cliente} | R$ {total:.2f}")
 
-    escolha = int(input("Escolha o orçamento: ")) - 1
+    escolha = escolher_opcao(dados["orcamentos"], "Escolha o orçamento: ")
 
     if escolha < 0 or escolha >= len(dados["orcamentos"]):
         print("Opção inválida.")
