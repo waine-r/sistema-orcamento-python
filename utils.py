@@ -28,3 +28,14 @@ def escolher_opcao(lista, mensagem):
             return escolha  # retorna índice válido
         else:
             print("❌ Opção inválida! Tente novamente.")
+
+def converter_numero(valor_str):
+    """
+    Converte número brasileiro:
+    1.250,50 → 1250.50
+    """
+
+    valor_str = valor_str.replace(".", "")  # remove milhar
+    valor_str = valor_str.replace(",", ".")  # troca decimal
+
+    return float(valor_str)

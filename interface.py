@@ -1,5 +1,6 @@
 import tkinter as tk  # biblioteca para criar interface gráfica
 
+from orcamento import formatar_numero, formatar_moeda
 # importa funções do seu sistema
 from empresa import cadastrar_empresa
 from cliente import cadastrar_cliente, listar_clientes
@@ -209,12 +210,14 @@ def tela_criar_orcamento():
     # FUNÇÃO ADICIONAR ITEM
     # =========================
 
+    from utils import converter_numero
+
     def adicionar_item():
         try:
             descricao = entry_desc.get()
-            quantidade = float(entry_qtd.get())
+            quantidade = converter_numero(entry_qtd.get())
             unidade = entry_unidade.get()  # pega unidade
-            valor = float(entry_valor.get())
+            valor = converter_numero(entry_valor.get())
 
             subtotal = calcular_subtotal(quantidade, valor)
 
@@ -233,8 +236,8 @@ def tela_criar_orcamento():
 
             lista_itens.insert(
             tk.END,
-            f"{descricao} | {quantidade} {unidade} | "
-            f"R$ {valor:.2f} | Total: R$ {subtotal:.2f}"
+            f"{descricao} | {formatar_numero(quantidade)} {unidade} | "
+            f"R$ {formatar_moeda(valor)} | Total: R$ {subtotal:.2f}"
         )
 
             # limpa campos
@@ -475,14 +478,29 @@ def tela_cadastrar_empresa():
 
     logo_path = tk.StringVar()
 
+    import shutil  # copiar arquivo
+    import os
+
     def selecionar_logo():
+
         caminho = filedialog.askopenfilename(
             title="Selecionar Logo",
             filetypes=[("Imagens", "*.png *.jpg *.jpeg")]
         )
 
         if caminho:
-            logo_path.set(caminho)
+
+            # cria pasta se não existir
+            os.makedirs("logos", exist_ok=True)
+
+            # nome padronizado
+            destino = os.path.join("logos", "logo_empresa.png")
+
+            # copia arquivo
+            shutil.copy(caminho, destino)
+
+            # salva novo caminho
+            logo_path.set(destino)
 
     tk.Button(janela, text="Selecionar Logo", command=selecionar_logo).pack(pady=5)
 
@@ -503,6 +521,7 @@ def tela_cadastrar_empresa():
         }
 
         dados["empresa"] = empresa
+        print("EMPRESA SALVA:", dados["empresa"])
 
         salvar_dados(dados)
 
