@@ -4,6 +4,7 @@ import tkinter as tk  # biblioteca para criar interface gráfica
 from empresa import cadastrar_empresa
 from cliente import cadastrar_cliente, listar_clientes
 from orcamento import criar_orcamento, listar_orcamentos, excluir_orcamento, gerar_pdf_orcamento
+from tkinter import messagebox  # caixa de mensagem profissional
 
 
 # função principal da interface
@@ -271,7 +272,7 @@ def tela_criar_orcamento():
 
         salvar_dados(dados)
 
-        tk.Label(janela, text="Orçamento salvo com sucesso!", fg="green").pack()
+        messagebox.showinfo("Sucesso", "Orçamento salvo com sucesso!")  # popup
 
         janela.destroy()
 
