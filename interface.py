@@ -271,7 +271,7 @@ def tela_criar_orcamento():
         observacoes = entry_obs.get()
         validade = entry_validade.get()
 
-        numero = gerar_numero_orcamento(dados),
+        numero = gerar_numero_orcamento(dados)
 
         orcamento = {
             
