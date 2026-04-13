@@ -26,7 +26,7 @@ def iniciar_interface():
     btn_cliente.pack(pady=5)
 
     # botão listar clientes
-    btn_listar_clientes = tk.Button(janela, text="Listar Clientes", width=30, command=listar_clientes)
+    btn_listar_clientes = tk.Button(janela, text="Listar Clientes", width=30, command=tela_listar_clientes)
     btn_listar_clientes.pack(pady=5)
 
     # botão criar orçamento
@@ -107,3 +107,28 @@ def tela_cadastrar_cliente():
 
     # botão salvar
     tk.Button(janela, text="Salvar", command=salvar).pack(pady=10)
+
+# tela para listar clientes na interface
+def tela_listar_clientes():
+
+    from banco import carregar_dados  # importa função para carregar dados
+
+    dados = carregar_dados()  # carrega dados do JSON
+
+    # cria nova janela
+    janela = tk.Toplevel()
+    janela.title("Lista de Clientes")
+    janela.geometry("400x400")
+
+    tk.Label(janela, text="Clientes cadastrados", font=("Arial", 14)).pack(pady=10)
+
+    # verifica se há clientes
+    if "clientes" not in dados or len(dados["clientes"]) == 0:
+        tk.Label(janela, text="Nenhum cliente cadastrado").pack()
+        return
+
+    # lista os clientes
+    for cliente in dados["clientes"]:
+        texto = f"{cliente['nome']} - {cliente['telefone']}"
+
+        tk.Label(janela, text=texto, anchor="w").pack(fill="x", padx=10, pady=2)
