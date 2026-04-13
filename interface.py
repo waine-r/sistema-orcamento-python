@@ -184,6 +184,10 @@ def tela_criar_orcamento():
     entry_qtd = tk.Entry(janela)
     entry_qtd.pack()
 
+    tk.Label(janela, text="Unidade").pack()  # label unidade
+    entry_unidade = tk.Entry(janela)  # campo unidade
+    entry_unidade.pack()
+
     tk.Label(janela, text="Valor Unitário").pack()
     entry_valor = tk.Entry(janela)
     entry_valor.pack()
@@ -202,12 +206,14 @@ def tela_criar_orcamento():
         try:
             descricao = entry_desc.get()
             quantidade = float(entry_qtd.get())
+            unidade = entry_unidade.get()  # pega unidade
             valor = float(entry_valor.get())
 
             subtotal = calcular_subtotal(quantidade, valor)
 
             item = {
                 "descricao": descricao,
+                "unidade": unidade,  # adiciona unidade
                 "quantidade": quantidade,
                 "valor_unitario": valor,
                 "subtotal": subtotal
@@ -224,6 +230,7 @@ def tela_criar_orcamento():
             entry_desc.delete(0, tk.END)
             entry_qtd.delete(0, tk.END)
             entry_valor.delete(0, tk.END)
+            entry_unidade.delete(0, tk.END)  # limpa unidade
 
         except:
             print("Erro ao adicionar item")
@@ -252,17 +259,24 @@ def tela_criar_orcamento():
     def salvar_orcamento():
 
         cliente_nome = cliente_var.get()
-
         cliente_escolhido = next(c for c in dados["clientes"] if c["nome"] == cliente_nome)
-
         total = calcular_total(itens)
+        forma_pagamento = entry_pagamento.get()
+        prazo_execucao = entry_prazo.get()
+        observacoes = entry_obs.get()
+        validade = entry_validade.get()
 
         orcamento = {
             "numero": datetime.now().strftime("%d%m.%Y"),
             "data": datetime.now().strftime("%d/%m/%Y"),
             "cliente": cliente_escolhido,
             "itens": itens,
-            "total": total
+            "total": total,
+            "forma_pagamento": forma_pagamento,
+            "prazo_execucao": prazo_execucao,
+            "observacoes": observacoes,
+            "validade": validade,
+            
         }
 
         if "orcamentos" not in dados:
@@ -275,5 +289,22 @@ def tela_criar_orcamento():
         messagebox.showinfo("Sucesso", "Orçamento salvo com sucesso!")  # popup
 
         janela.destroy()
+
+
+    tk.Label(janela, text="Forma de pagamento").pack()
+    entry_pagamento = tk.Entry(janela)
+    entry_pagamento.pack()
+
+    tk.Label(janela, text="Prazo de execução").pack()
+    entry_prazo = tk.Entry(janela)
+    entry_prazo.pack()
+
+    tk.Label(janela, text="Observações").pack()
+    entry_obs = tk.Entry(janela)
+    entry_obs.pack()
+
+    tk.Label(janela, text="Validade").pack()
+    entry_validade = tk.Entry(janela)
+    entry_validade.pack()    
 
     tk.Button(janela, text="Salvar Orçamento", command=salvar_orcamento).pack(pady=10)
