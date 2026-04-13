@@ -43,7 +43,7 @@ def iniciar_interface():
     btn_excluir.pack(pady=5)
 
     # botão gerar PDF
-    btn_pdf = tk.Button(janela, text="Gerar PDF", width=30, command=gerar_pdf_orcamento)
+    btn_pdf = tk.Button(janela, text="Gerar PDF", width=30, command=tela_gerar_pdf)
     btn_pdf.pack(pady=5)
 
     # botão sair
@@ -389,3 +389,48 @@ def tela_excluir_orcamento():
             messagebox.showwarning("Erro", "Selecione um orçamento!")
 
     tk.Button(janela, text="Excluir", command=excluir).pack(pady=10)
+
+# tela para gerar PDF escolhendo orçamento
+def tela_gerar_pdf():
+
+    from banco import carregar_dados
+    from orcamento import gerar_pdf_orcamento
+    from tkinter import messagebox
+
+    dados = carregar_dados()
+
+    janela = tk.Toplevel()
+    janela.title("Gerar PDF")
+    janela.geometry("500x400")
+
+    tk.Label(janela, text="Selecione um orçamento", font=("Arial", 14)).pack(pady=10)
+
+    # verifica se tem orçamentos
+    if "orcamentos" not in dados or len(dados["orcamentos"]) == 0:
+        tk.Label(janela, text="Nenhum orçamento disponível").pack()
+        return
+
+    lista = tk.Listbox(janela, width=70)
+    lista.pack(pady=10)
+
+    # preencher lista
+    for orc in dados["orcamentos"]:
+        texto = f"{orc.get('numero','N/A')} | {orc['cliente']['nome']} | R$ {orc['total']:.2f}"
+        lista.insert(tk.END, texto)
+
+    # função ao clicar no botão
+    def gerar():
+        try:
+            selecionado = lista.curselection()[0]
+
+            # chama função existente (a mesma do terminal)
+            gerar_pdf_orcamento(selecionado)
+
+            messagebox.showinfo("Sucesso", "PDF gerado!")
+
+            janela.destroy()
+
+        except:
+            messagebox.showwarning("Erro", "Selecione um orçamento!")
+
+    tk.Button(janela, text="Gerar PDF", command=gerar).pack(pady=10)

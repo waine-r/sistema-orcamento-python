@@ -54,6 +54,9 @@ cor_principal = colors.HexColor("#2E7D32")  # verde profissional
 def criar_orcamento():
     dados = carregar_dados()
 
+    empresa = dados.get("empresa", {})  # pega dados da empresa
+    logo_path = empresa.get("logo", None)  # caminho da logo (se existir)
+
 
     # Verifica se existem clientes cadastrados
     if "clientes" not in dados or len(dados["clientes"]) == 0:
@@ -68,9 +71,7 @@ def criar_orcamento():
     for i, cliente in enumerate(dados["clientes"]):
         print(f"{i + 1} - {cliente['nome']}")
 
-    # Usuário escolhe cliente
-    escolha = escolher_opcao(dados["clientes"], "Digite o número do cliente: ")
-
+   
     cliente_escolhido = dados["clientes"][escolha]
 
     # Lista de itens do orçamento
@@ -190,9 +191,7 @@ def excluir_orcamento():
         print(f"{i + 1} - {cliente} | R$ {total:.2f}")
         print("\nDigite o número do orçamento e pressione ENTER")
 
-    # Usuário escolhe qual excluir
-    escolha = escolher_opcao(dados["orcamentos"], "Digite o número do orçamento que deseja excluir: ")
-
+    
     # Verifica se a escolha é válida
     if escolha < 0 or escolha >= len(dados["orcamentos"]):
         print("Opção inválida.")
@@ -206,34 +205,27 @@ def excluir_orcamento():
 
     print(f"Orçamento do cliente {removido['cliente']['nome']} excluído com sucesso!")
 
-def gerar_pdf_orcamento():
+def gerar_pdf_orcamento(indice=None):
+
+    from banco import carregar_dados
+    import webbrowser
+    import os
+
     dados = carregar_dados()
 
-    # Pegar dados da empresa
-    empresa = dados.get("empresa", {})
-    logo_path = empresa.get("logo")
-    # Define cor baseada na logo
-    cor_principal = pegar_cor_logo(logo_path) if logo_path else colors.HexColor("#2E7D32")
-    # Remove aspas caso existam
-    if logo_path:
-        logo_path = logo_path.replace('"', '')
-
-
-# Verifica se existem orçamentos
     if "orcamentos" not in dados or len(dados["orcamentos"]) == 0:
         print("Nenhum orçamento encontrado.")
         return
 
-    print("\n=== GERAR PDF ===")
+    # 👉 SE NÃO VEIO ÍNDICE → usa input (modo antigo)
+    if indice is None:
+        for i, orc in enumerate(dados["orcamentos"]):
+            print(f"{i + 1} - {orc['cliente']['nome']} - R$ {orc['total']}")
 
-    # Lista os orçamentos
-    for i, orcamento in enumerate(dados["orcamentos"]):
-        cliente = orcamento["cliente"]["nome"]
-        total = orcamento["total"]
+        escolha = int(input("Escolha o orçamento: ")) - 1
 
-        print(f"{i + 1} - {cliente} | R$ {total:.2f}")
-
-    escolha = escolher_opcao(dados["orcamentos"], "Escolha o orçamento: ")
+    else:
+        escolha = indice  # usa índice da interface
 
     if escolha < 0 or escolha >= len(dados["orcamentos"]):
         print("Opção inválida.")
@@ -241,8 +233,14 @@ def gerar_pdf_orcamento():
 
     orcamento = dados["orcamentos"][escolha]
 
+
+# Verifica se existem orçamentos
+    if "orcamentos" not in dados or len(dados["orcamentos"]) == 0:
+        print("Nenhum orçamento encontrado.")
+        return
+
     # Nome do arquivo PDF
-    nome_arquivo = f"orcamento_{escolha + 1}.pdf"
+    nome_arquivo = f"orcamento_{orcamento.get('numero','sem_numero')}.pdf"
 
     # Cria o PDF
     c = canvas.Canvas(nome_arquivo, pagesize=A4)
@@ -665,9 +663,11 @@ def gerar_pdf_orcamento():
     import webbrowser  # abre no navegador padrão
     import os
 
-    caminho = os.path.abspath(nome_arquivo)  # pega caminho completo
+    nome_arquivo = f"orcamento_{orcamento.get('numero','sem_numero')}.pdf"
 
-    webbrowser.open(f"file://{caminho}")  # abre o PDF automaticamente
+    caminho = os.path.abspath(nome_arquivo)
+
+    webbrowser.open(f"file://{caminho}")
 
     print(f"PDF gerado com sucesso: {nome_arquivo}")
 
@@ -698,4 +698,3 @@ def formatar_numero(valor):
     Converte 150.0 → 150,00
     """
     return f"{valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-
