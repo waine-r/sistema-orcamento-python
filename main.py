@@ -5,6 +5,7 @@ from orcamento import criar_orcamento
 from orcamento import listar_orcamentos
 from orcamento import excluir_orcamento
 from orcamento import gerar_pdf_orcamento
+from interface import iniciar_interface  # importa interface gráfica
 
 
 # Função principal que controla o menu
@@ -54,4 +55,16 @@ def menu():
 
 
 # Inicia o programa
-menu()
+print("1 - Modo Terminal")
+print("2 - Modo Interface")
+
+modo = input("Escolha o modo: ")
+
+if modo == "1":
+    menu()  # roda sistema antigo
+
+elif modo == "2":
+    iniciar_interface()  # abre interface gráfica
+
+else:
+    print("Opção inválida")
