@@ -172,6 +172,9 @@ def tela_criar_orcamento():
 
     itens = []
 
+    total_var = tk.StringVar()  # variável que guarda o total na tela
+    total_var.set("Total: R$ 0.00")  # valor inicial
+
     tk.Label(janela, text="Descrição").pack()
     entry_desc = tk.Entry(janela)
     entry_desc.pack()
@@ -186,6 +189,9 @@ def tela_criar_orcamento():
 
     lista_itens = tk.Listbox(janela, width=60)
     lista_itens.pack(pady=10)
+
+    label_total = tk.Label(janela, textvariable=total_var, font=("Arial", 12, "bold"))
+    label_total.pack()
 
     # =========================
     # FUNÇÃO ADICIONAR ITEM
@@ -208,6 +214,9 @@ def tela_criar_orcamento():
 
             itens.append(item)
 
+            total = calcular_total(itens)  # recalcula total
+            total_var.set(f"Total: R$ {total:.2f}")  # atualiza na tela
+
             lista_itens.insert(tk.END, f"{descricao} - R$ {subtotal:.2f}")
 
             # limpa campos
@@ -219,6 +228,21 @@ def tela_criar_orcamento():
             print("Erro ao adicionar item")
 
     tk.Button(janela, text="Adicionar Item", command=adicionar_item).pack()
+
+    def remover_item():
+        try:
+            selecionado = lista_itens.curselection()[0]  # pega índice selecionado
+
+            lista_itens.delete(selecionado)  # remove da lista visual
+            itens.pop(selecionado)  # remove da lista real
+
+            total = calcular_total(itens)  # recalcula total
+            total_var.set(f"Total: R$ {total:.2f}")  # atualiza
+
+        except:
+         print("Selecione um item para remover")
+
+    tk.Button(janela, text="Remover Item", command=remover_item).pack()
 
     # =========================
     # SALVAR ORÇAMENTO
@@ -247,7 +271,7 @@ def tela_criar_orcamento():
 
         salvar_dados(dados)
 
-        print("Orçamento salvo!")
+        tk.Label(janela, text="Orçamento salvo com sucesso!", fg="green").pack()
 
         janela.destroy()
 
