@@ -215,8 +215,13 @@ def gerar_pdf_orcamento(indice=None):
 
     dados = carregar_dados()
 
-    empresa = dados.get("empresa", {})
-    logo_path = empresa.get("logo", None)
+    empresa = dados.get("empresa")
+
+    if not empresa:
+        print("Empresa não cadastrada.")
+        return
+
+    logo_path = empresa.get("logo")
 
     # define cor dinâmica
     if logo_path:
@@ -357,15 +362,15 @@ def gerar_pdf_orcamento(indice=None):
  
 
     # Título
-    c.setFillColor(cor_principal)
-    c.setFont("Helvetica-Bold", 18)
-    
-        # Número e data do orçamento
-    c.setFillColor(colors.black)
-    c.setFont("Helvetica", 10)
+    titulo = f"ORÇAMENTO {orcamento.get('numero', '')}"
 
+    c.setFont("Helvetica-Bold", 20)
     c.setFillColor(cor_principal)
-    c.setFont("Helvetica-Bold", 18)
+    c.drawString(col_esquerda, 690, titulo)
+
+    # 🔥 MUITO IMPORTANTE
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica", 11)
 
     # Junta título + número
     titulo = f"ORÇAMENTO {orcamento.get('numero', '')}"    
