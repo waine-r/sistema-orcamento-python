@@ -22,7 +22,7 @@ def iniciar_interface():
     btn_empresa.pack(pady=5)
 
     # botão cadastrar cliente
-    btn_cliente = tk.Button(janela, text="Cadastrar Cliente", width=30, command=cadastrar_cliente)
+    btn_cliente = tk.Button(janela, text="Cadastrar Cliente", width=30, command=tela_cadastrar_cliente)
     btn_cliente.pack(pady=5)
 
     # botão listar clientes
@@ -50,3 +50,60 @@ def iniciar_interface():
     btn_sair.pack(pady=20)
 
     janela.mainloop()  # mantém a janela aberta
+
+# tela para cadastrar cliente (100% gráfica)
+def tela_cadastrar_cliente():
+
+    # cria nova janela
+    janela = tk.Toplevel()
+    janela.title("Cadastrar Cliente")
+    janela.geometry("300x300")
+
+    # campo nome
+    tk.Label(janela, text="Nome").pack()
+    entry_nome = tk.Entry(janela)
+    entry_nome.pack()
+
+    # campo telefone
+    tk.Label(janela, text="Telefone").pack()
+    entry_telefone = tk.Entry(janela)
+    entry_telefone.pack()
+
+    # campo email
+    tk.Label(janela, text="Email").pack()
+    entry_email = tk.Entry(janela)
+    entry_email.pack()
+
+    # campo endereço
+    tk.Label(janela, text="Endereço").pack()
+    entry_endereco = tk.Entry(janela)
+    entry_endereco.pack()
+
+    # função que salva os dados
+    def salvar():
+        from banco import carregar_dados, salvar_dados  # importa aqui dentro
+
+        dados = carregar_dados()  # carrega dados existentes
+
+        # se não existir lista de clientes, cria
+        if "clientes" not in dados:
+            dados["clientes"] = []
+
+        # cria cliente com dados da tela
+        cliente = {
+            "nome": entry_nome.get(),  # pega texto digitado
+            "telefone": entry_telefone.get(),
+            "email": entry_email.get(),
+            "endereco": entry_endereco.get()
+        }
+
+        dados["clientes"].append(cliente)  # adiciona cliente
+
+        salvar_dados(dados)  # salva no JSON
+
+        print("Cliente salvo com sucesso!")  # feedback no terminal
+
+        janela.destroy()  # fecha a janela
+
+    # botão salvar
+    tk.Button(janela, text="Salvar", command=salvar).pack(pady=10)
