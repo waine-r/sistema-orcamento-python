@@ -137,6 +137,7 @@ def tela_listar_clientes():
 # tela para criar orçamento (interface)
 def tela_criar_orcamento():
 
+    from orcamento import gerar_numero_orcamento  # importa gerador correto
     from banco import carregar_dados, salvar_dados
     from calculos import calcular_subtotal, calcular_total
     from datetime import datetime
@@ -270,8 +271,11 @@ def tela_criar_orcamento():
         observacoes = entry_obs.get()
         validade = entry_validade.get()
 
+        numero = gerar_numero_orcamento(dados),
+
         orcamento = {
-            "numero": datetime.now().strftime("%d%m.%Y"),
+            
+            "numero": numero,  # número correto
             "data": datetime.now().strftime("%d/%m/%Y"),
             "cliente": cliente_escolhido,
             "itens": itens,
