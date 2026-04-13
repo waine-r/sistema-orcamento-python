@@ -6,6 +6,7 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 from datetime import datetime # usado para pegar data atual
 from colorthief import ColorThief
+from calculos import calcular_subtotal, calcular_total  # importa funções de cálculo
 
 def gerar_numero_orcamento(dados):
     """
@@ -83,7 +84,7 @@ def criar_orcamento():
         valor_unitario = float(input("Valor unitário: "))
 
         # Calcula subtotal
-        subtotal = quantidade * valor_unitario
+        subtotal = calcular_subtotal(quantidade, valor_unitario)  # usa função externa
 
         item = {
             "descricao": descricao,
@@ -101,7 +102,7 @@ def criar_orcamento():
             break
 
     # Cálculo do total
-    total = sum(item["subtotal"] for item in itens)
+    total = calcular_total(itens)  # usa função externa
 
         # =========================
     # INFORMAÇÕES ADICIONAIS
