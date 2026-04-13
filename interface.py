@@ -35,7 +35,7 @@ def iniciar_interface():
     btn_orcamento.pack(pady=5)
 
     # botão listar orçamentos
-    btn_listar_orc = tk.Button(janela, text="Listar Orçamentos", width=30, command=listar_orcamentos)
+    btn_listar_orc = tk.Button(janela, text="Listar Orçamentos", width=30, command=tela_listar_orcamentos)
     btn_listar_orc.pack(pady=5)
 
     # botão excluir orçamento
@@ -224,7 +224,11 @@ def tela_criar_orcamento():
             total = calcular_total(itens)  # recalcula total
             total_var.set(f"Total: R$ {total:.2f}")  # atualiza na tela
 
-            lista_itens.insert(tk.END, f"{descricao} - R$ {subtotal:.2f}")
+            lista_itens.insert(
+            tk.END,
+            f"{descricao} | {quantidade} {unidade} | "
+            f"R$ {valor:.2f} | Total: R$ {subtotal:.2f}"
+        )
 
             # limpa campos
             entry_desc.delete(0, tk.END)
@@ -308,3 +312,29 @@ def tela_criar_orcamento():
     entry_validade.pack()    
 
     tk.Button(janela, text="Salvar Orçamento", command=salvar_orcamento).pack(pady=10)
+
+# tela para listar orçamentos
+def tela_listar_orcamentos():
+
+    from banco import carregar_dados
+
+    dados = carregar_dados()
+
+    janela = tk.Toplevel()
+    janela.title("Orçamentos")
+    janela.geometry("500x400")
+
+    tk.Label(janela, text="Lista de Orçamentos", font=("Arial", 14)).pack(pady=10)
+
+    if "orcamentos" not in dados or len(dados["orcamentos"]) == 0:
+        tk.Label(janela, text="Nenhum orçamento encontrado").pack()
+        return
+
+    for orc in dados["orcamentos"]:
+        cliente = orc["cliente"]["nome"]
+        total = orc["total"]
+        numero = orc.get("numero", "N/A")
+
+        texto = f"{numero} | {cliente} | R$ {total:.2f}"
+
+        tk.Label(janela, text=texto, anchor="w").pack(fill="x", padx=10, pady=2)
