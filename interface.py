@@ -30,7 +30,7 @@ def iniciar_interface():
     btn_listar_clientes.pack(pady=5)
 
     # botão criar orçamento
-    btn_orcamento = tk.Button(janela, text="Criar Orçamento", width=30, command=criar_orcamento)
+    btn_orcamento = tk.Button(janela, text="Criar Orçamento", width=30, command=tela_criar_orcamento)
     btn_orcamento.pack(pady=5)
 
     # botão listar orçamentos
@@ -132,3 +132,123 @@ def tela_listar_clientes():
         texto = f"{cliente['nome']} - {cliente['telefone']}"
 
         tk.Label(janela, text=texto, anchor="w").pack(fill="x", padx=10, pady=2)
+
+# tela para criar orçamento (interface)
+def tela_criar_orcamento():
+
+    from banco import carregar_dados, salvar_dados
+    from calculos import calcular_subtotal, calcular_total
+    from datetime import datetime
+
+    dados = carregar_dados()
+
+    # verifica clientes
+    if "clientes" not in dados or len(dados["clientes"]) == 0:
+        print("Cadastre um cliente primeiro!")
+        return
+
+    # cria janela
+    janela = tk.Toplevel()
+    janela.title("Novo Orçamento")
+    janela.geometry("500x500")
+
+    # =========================
+    # CLIENTE
+    # =========================
+
+    tk.Label(janela, text="Selecione o cliente").pack()
+
+    nomes_clientes = [c["nome"] for c in dados["clientes"]]
+
+    cliente_var = tk.StringVar()
+    cliente_var.set(nomes_clientes[0])
+
+    dropdown = tk.OptionMenu(janela, cliente_var, *nomes_clientes)
+    dropdown.pack()
+
+    # =========================
+    # ITENS
+    # =========================
+
+    itens = []
+
+    tk.Label(janela, text="Descrição").pack()
+    entry_desc = tk.Entry(janela)
+    entry_desc.pack()
+
+    tk.Label(janela, text="Quantidade").pack()
+    entry_qtd = tk.Entry(janela)
+    entry_qtd.pack()
+
+    tk.Label(janela, text="Valor Unitário").pack()
+    entry_valor = tk.Entry(janela)
+    entry_valor.pack()
+
+    lista_itens = tk.Listbox(janela, width=60)
+    lista_itens.pack(pady=10)
+
+    # =========================
+    # FUNÇÃO ADICIONAR ITEM
+    # =========================
+
+    def adicionar_item():
+        try:
+            descricao = entry_desc.get()
+            quantidade = float(entry_qtd.get())
+            valor = float(entry_valor.get())
+
+            subtotal = calcular_subtotal(quantidade, valor)
+
+            item = {
+                "descricao": descricao,
+                "quantidade": quantidade,
+                "valor_unitario": valor,
+                "subtotal": subtotal
+            }
+
+            itens.append(item)
+
+            lista_itens.insert(tk.END, f"{descricao} - R$ {subtotal:.2f}")
+
+            # limpa campos
+            entry_desc.delete(0, tk.END)
+            entry_qtd.delete(0, tk.END)
+            entry_valor.delete(0, tk.END)
+
+        except:
+            print("Erro ao adicionar item")
+
+    tk.Button(janela, text="Adicionar Item", command=adicionar_item).pack()
+
+    # =========================
+    # SALVAR ORÇAMENTO
+    # =========================
+
+    def salvar_orcamento():
+
+        cliente_nome = cliente_var.get()
+
+        cliente_escolhido = next(c for c in dados["clientes"] if c["nome"] == cliente_nome)
+
+        total = calcular_total(itens)
+
+        orcamento = {
+            "numero": datetime.now().strftime("%d%m.%Y"),
+            "data": datetime.now().strftime("%d/%m/%Y"),
+            "cliente": cliente_escolhido,
+            "itens": itens,
+            "total": total
+        }
+
+        if "orcamentos" not in dados:
+            dados["orcamentos"] = []
+
+        dados["orcamentos"].append(orcamento)
+
+        salvar_dados(dados)
+
+        print("Orçamento salvo!")
+
+        janela.destroy()
+
+    tk.Button(janela, text="Salvar Orçamento", command=salvar_orcamento).pack(pady=10)
