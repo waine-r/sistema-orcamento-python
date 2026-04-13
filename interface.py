@@ -19,7 +19,7 @@ def iniciar_interface():
     titulo.pack(pady=20)  # adiciona espaço
 
     # botão cadastrar empresa
-    btn_empresa = tk.Button(janela, text="Cadastrar Empresa", width=30, command=cadastrar_empresa)
+    btn_empresa = tk.Button(janela, text="Cadastrar Empresa", width=30, command=tela_cadastrar_empresa)
     btn_empresa.pack(pady=5)
 
     # botão cadastrar cliente
@@ -434,3 +434,80 @@ def tela_gerar_pdf():
             messagebox.showwarning("Erro", "Selecione um orçamento!")
 
     tk.Button(janela, text="Gerar PDF", command=gerar).pack(pady=10)
+
+# tela para cadastrar empresa
+def tela_cadastrar_empresa():
+
+    from banco import carregar_dados, salvar_dados
+    from tkinter import filedialog, messagebox
+
+    dados = carregar_dados()
+
+    # verifica se já existe empresa
+    if "empresa" in dados:
+        messagebox.showwarning("Aviso", "Empresa já cadastrada!")
+        return
+
+    janela = tk.Toplevel()
+    janela.title("Cadastrar Empresa")
+    janela.geometry("350x400")
+
+    # campos
+    tk.Label(janela, text="Nome da empresa").pack()
+    entry_nome = tk.Entry(janela)
+    entry_nome.pack()
+
+    tk.Label(janela, text="CNPJ").pack()
+    entry_cnpj = tk.Entry(janela)
+    entry_cnpj.pack()
+
+    tk.Label(janela, text="Telefone").pack()
+    entry_tel = tk.Entry(janela)
+    entry_tel.pack()
+
+    tk.Label(janela, text="Endereço").pack()
+    entry_end = tk.Entry(janela)
+    entry_end.pack()
+
+    # =========================
+    # LOGO
+    # =========================
+
+    logo_path = tk.StringVar()
+
+    def selecionar_logo():
+        caminho = filedialog.askopenfilename(
+            title="Selecionar Logo",
+            filetypes=[("Imagens", "*.png *.jpg *.jpeg")]
+        )
+
+        if caminho:
+            logo_path.set(caminho)
+
+    tk.Button(janela, text="Selecionar Logo", command=selecionar_logo).pack(pady=5)
+
+    tk.Label(janela, textvariable=logo_path).pack()
+
+    # =========================
+    # SALVAR
+    # =========================
+
+    def salvar():
+
+        empresa = {
+            "nome": entry_nome.get(),
+            "cnpj": entry_cnpj.get(),
+            "telefone": entry_tel.get(),
+            "endereco": entry_end.get(),
+            "logo": logo_path.get()
+        }
+
+        dados["empresa"] = empresa
+
+        salvar_dados(dados)
+
+        messagebox.showinfo("Sucesso", "Empresa cadastrada!")
+
+        janela.destroy()
+
+    tk.Button(janela, text="Salvar", command=salvar).pack(pady=10)
