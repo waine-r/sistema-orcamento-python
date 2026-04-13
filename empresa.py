@@ -5,9 +5,10 @@ from banco import carregar_dados, salvar_dados
 def cadastrar_empresa():
     dados = carregar_dados()
 
-    # Verifica se já existe empresa cadastrada
+    from tkinter import messagebox  # IMPORTANTE (coloque no topo do arquivo)
+
     if "empresa" in dados:
-        print("Empresa já cadastrada!")
+        messagebox.showwarning("Aviso", "Empresa já cadastrada!")
         return
 
     print("=== Cadastro da Empresa ===")

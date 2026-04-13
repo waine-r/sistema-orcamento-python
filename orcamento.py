@@ -662,6 +662,13 @@ def gerar_pdf_orcamento():
 
     c.save()
 
+    import webbrowser  # abre no navegador padrão
+    import os
+
+    caminho = os.path.abspath(nome_arquivo)  # pega caminho completo
+
+    webbrowser.open(f"file://{caminho}")  # abre o PDF automaticamente
+
     print(f"PDF gerado com sucesso: {nome_arquivo}")
 
 def pegar_cor_logo(caminho_logo):

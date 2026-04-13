@@ -39,7 +39,7 @@ def iniciar_interface():
     btn_listar_orc.pack(pady=5)
 
     # botão excluir orçamento
-    btn_excluir = tk.Button(janela, text="Excluir Orçamento", width=30, command=excluir_orcamento)
+    btn_excluir = tk.Button(janela, text="Excluir Orçamento", width=30, command=tela_excluir_orcamento)
     btn_excluir.pack(pady=5)
 
     # botão gerar PDF
@@ -75,6 +75,11 @@ def tela_cadastrar_cliente():
     entry_email = tk.Entry(janela)
     entry_email.pack()
 
+    # campo cnf/cnpj
+    tk.Label(janela, text="CPF/CNPJ (opcional)").pack()
+    entry_doc = tk.Entry(janela)
+    entry_doc.pack()
+
     # campo endereço
     tk.Label(janela, text="Endereço").pack()
     entry_endereco = tk.Entry(janela)
@@ -95,7 +100,8 @@ def tela_cadastrar_cliente():
             "nome": entry_nome.get(),  # pega texto digitado
             "telefone": entry_telefone.get(),
             "email": entry_email.get(),
-            "endereco": entry_endereco.get()
+            "endereco": entry_endereco.get(),
+            "documento": entry_doc.get()  # opcional
         }
 
         dados["clientes"].append(cliente)  # adiciona cliente
@@ -342,3 +348,44 @@ def tela_listar_orcamentos():
         texto = f"{numero} | {cliente} | R$ {total:.2f}"
 
         tk.Label(janela, text=texto, anchor="w").pack(fill="x", padx=10, pady=2)
+
+def tela_excluir_orcamento():
+
+    from banco import carregar_dados, salvar_dados
+
+    dados = carregar_dados()
+
+    janela = tk.Toplevel()
+    janela.title("Excluir Orçamento")
+    janela.geometry("500x400")
+
+    tk.Label(janela, text="Selecione um orçamento", font=("Arial", 14)).pack(pady=10)
+
+    if "orcamentos" not in dados or len(dados["orcamentos"]) == 0:
+        tk.Label(janela, text="Nenhum orçamento disponível").pack()
+        return
+
+    lista = tk.Listbox(janela, width=70)
+    lista.pack(pady=10)
+
+    # preencher lista
+    for orc in dados["orcamentos"]:
+        texto = f"{orc.get('numero','N/A')} | {orc['cliente']['nome']} | R$ {orc['total']:.2f}"
+        lista.insert(tk.END, texto)
+
+    def excluir():
+        try:
+            selecionado = lista.curselection()[0]
+
+            removido = dados["orcamentos"].pop(selecionado)
+
+            salvar_dados(dados)
+
+            messagebox.showinfo("Sucesso", "Orçamento excluído!")
+
+            janela.destroy()
+
+        except:
+            messagebox.showwarning("Erro", "Selecione um orçamento!")
+
+    tk.Button(janela, text="Excluir", command=excluir).pack(pady=10)
