@@ -72,6 +72,7 @@ def criar_orcamento():
         print(f"{i + 1} - {cliente['nome']}")
 
    
+    escolha = escolher_opcao(dados["clientes"], "Digite o número do cliente: ")
     cliente_escolhido = dados["clientes"][escolha]
 
     # Lista de itens do orçamento
@@ -191,6 +192,7 @@ def excluir_orcamento():
         print(f"{i + 1} - {cliente} | R$ {total:.2f}")
         print("\nDigite o número do orçamento e pressione ENTER")
 
+    escolha = escolher_opcao(dados["orcamentos"], "Digite o número do orçamento que deseja excluir: ")
     
     # Verifica se a escolha é válida
     if escolha < 0 or escolha >= len(dados["orcamentos"]):
@@ -212,6 +214,15 @@ def gerar_pdf_orcamento(indice=None):
     import os
 
     dados = carregar_dados()
+
+    empresa = dados.get("empresa", {})
+    logo_path = empresa.get("logo", None)
+
+    # define cor dinâmica
+    if logo_path:
+        cor_principal = pegar_cor_logo(logo_path)
+    else:
+        cor_principal = colors.HexColor("#2E7D32")  # fallback
 
     if "orcamentos" not in dados or len(dados["orcamentos"]) == 0:
         print("Nenhum orçamento encontrado.")
