@@ -54,17 +54,5 @@ def menu():
             print("Opção inválida!")
 
 
-# Inicia o programa
-print("1 - Modo Terminal")
-print("2 - Modo Interface")
-
-modo = input("Escolha o modo: ")
-
-if modo == "1":
-    menu()  # roda sistema antigo
-
-elif modo == "2":
-    iniciar_interface()  # abre interface gráfica
-
-else:
-    print("Opção inválida")
+# 🔥 inicia direto na interface (SEM usar input)
+iniciar_interface()
