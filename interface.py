@@ -40,7 +40,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=tela_cadastrar_empresa
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -68,7 +68,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=tela_listar_clientes
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -82,7 +82,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=tela_criar_orcamento
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -96,7 +96,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=tela_listar_orcamentos
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -110,7 +110,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=tela_excluir_orcamento
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -124,7 +124,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=tela_gerar_pdf
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -138,7 +138,7 @@ def iniciar_interface():
         fg=cor_texto_botao,
         font=fonte_botao,
         relief="flat",
-        command=tela_cadastrar_cliente
+        command=janela.destroy
     ).pack(pady=5)
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
@@ -211,15 +211,15 @@ def tela_cadastrar_cliente():
 
         janela.destroy()  # fecha a janela
 
-    # botão salvar
-        tk.Button(
-            janela,
-            text="Salvar",
-            bg="#2E7D32",
-            fg="white",
-            relief="flat",
-            font=("Arial", 10, "bold")
-    ).pack(pady=10)
+ # botão salvar
+    tk.Button(
+        janela,
+        text="Salvar",
+        bg="#2E7D32",
+        fg="white",
+        relief="flat",
+        font=("Arial", 10, "bold")
+).pack(pady=10)
 
 # tela para listar clientes na interface
 def tela_listar_clientes():
