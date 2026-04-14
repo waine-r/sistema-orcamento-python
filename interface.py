@@ -218,7 +218,8 @@ def tela_cadastrar_cliente():
         bg="#2E7D32",
         fg="white",
         relief="flat",
-        font=("Arial", 10, "bold")
+        font=("Arial", 10, "bold"),
+        command=salvar
 ).pack(pady=10)
 
 # tela para listar clientes na interface
