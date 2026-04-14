@@ -7,154 +7,68 @@ from cliente import cadastrar_cliente, listar_clientes
 from orcamento import criar_orcamento, listar_orcamentos, excluir_orcamento, gerar_pdf_orcamento
 from tkinter import messagebox  # caixa de mensagem profissional
 
-
-# função principal da interface
+#função iniciar interface
 def iniciar_interface():
 
-    janela = tk.Tk()  # cria a janela principal
+    janela = tk.Tk()
+    janela.title("Sistema de Orçamentos")
+    janela.geometry("400x500")
+    janela.configure(bg="#f5f5f5")
 
+    # fontes e cores
+    fonte_titulo = ("Segoe UI", 18, "bold")
+    fonte_botao = ("Arial", 11)
+    cor_botao = "#2E7D32"
+    cor_texto = "white"
+
+    # hover
     def on_enter(e):
-        e.widget["bg"] = "#1B5E20"  # mais escuro
+        e.widget["bg"] = "#1B5E20"
 
     def on_leave(e):
         e.widget["bg"] = "#2E7D32"
 
-    frame = tk.Frame(janela, bg="#f5f5f5")
-    frame.pack(expand=True)
-    janela.title("Sistema de Orçamentos")
-    janela.geometry("400x500")  # tamanho fixo
-    janela.configure(bg="#f5f5f5")  # fundo cinza claro
-    fonte_titulo = ("Arial", 16, "bold")
-    fonte_botao = ("Arial", 11)
-    cor_botao = "#2E7D32"
-    cor_texto_botao = "white"
-
-    
-
-    # título no topo
+    # título
     tk.Label(
         janela,
         text="Sistema de Orçamentos",
-        fonte_titulo = ("Arial", 16, "bold"),
+        font=fonte_titulo,
         bg="#f5f5f5"
     ).pack(pady=20)
 
+    # =========================
+    # BOTÕES
+    # =========================
 
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
+    def criar_botao(texto, comando):
+        btn = tk.Button(
+            janela,
+            text=texto,
+            width=25,
+            bg=cor_botao,
+            fg=cor_texto,
+            font=fonte_botao,
+            relief="flat",
+            command=comando
+        )
+        btn.pack(pady=5)
+        btn.bind("<Enter>", on_enter)
+        btn.bind("<Leave>", on_leave)
 
-    # botão cadastrar empresa
-    btn_empresa = tk.Button(
-        janela,
-        text="Cadastrar Empresa",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_cadastrar_empresa
-    ).pack(pady=5) 
+    # botões
+    criar_botao("Cadastrar Empresa", tela_cadastrar_empresa)
+    criar_botao("Cadastrar Cliente", tela_cadastrar_cliente)
+    criar_botao("Listar Clientes", tela_listar_clientes)
+    criar_botao("Criar Orçamento", tela_criar_orcamento)
+    criar_botao("Listar Orçamentos", tela_listar_orcamentos)
+    criar_botao("Excluir Orçamento", tela_excluir_orcamento)
+    criar_botao("Gerar PDF", tela_gerar_pdf)
+    criar_botao("Sair", janela.destroy)
 
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão cadastrar cliente
-    btn_cliente = tk.Button(
-        janela,
-        text="Cadastrar Cliente",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_cadastrar_cliente
-    ).pack(pady=5)
-
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão listar clientes
-    btn_listar_clientes = tk.Button(
-        janela,
-        text="Listar Clientes",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_listar_clientes
-    ).pack(pady=5)
-
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão criar orçamento
-    btn_orcamento = tk.Button(
-        janela,
-        text="Criar Orçamento",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_criar_orcamento
-    ).pack(pady=5)
-
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão listar orçamentos
-    btn_listar_orc = tk.Button(
-        janela,
-        text="Listar Orçamentos",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_listar_orcamentos
-    ).pack(pady=5)
-
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão excluir orçamento
-    btn_excluir = tk.Button(
-        janela,
-        text="Excluir Orçamento",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_excluir_orcamento
-    ).pack(pady=5)
-
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão gerar PDF
-    btn_pdf = tk.Button(
-        janela,
-        text="Gerar PDF",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=tela_gerar_pdf
-    ).pack(pady=5)
-
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
-
-    # botão sair
-    btn_sair = tk.Button(
-        janela,
-        text="Sair",
-        width=25,
-        bg=cor_botao,
-        fg=cor_texto_botao,
-        font=fonte_botao,
-        relief="flat",
-        command=janela.destroy
-    ).pack(pady=5)
-
+    # espaço final
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=15)
 
-    janela.mainloop()  # mantém a janela aberta
+    janela.mainloop()
 
 # tela para cadastrar cliente (100% gráfica)
 def tela_cadastrar_cliente():
