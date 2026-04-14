@@ -12,6 +12,15 @@ from tkinter import messagebox  # caixa de mensagem profissional
 def iniciar_interface():
 
     janela = tk.Tk()  # cria a janela principal
+
+    def on_enter(e):
+        e.widget["bg"] = "#1B5E20"  # mais escuro
+
+    def on_leave(e):
+        e.widget["bg"] = "#2E7D32"
+
+    frame = tk.Frame(janela, bg="#f5f5f5")
+    frame.pack(expand=True)
     janela.title("Sistema de Orçamentos")
     janela.geometry("400x500")  # tamanho fixo
     janela.configure(bg="#f5f5f5")  # fundo cinza claro
@@ -20,11 +29,13 @@ def iniciar_interface():
     cor_botao = "#2E7D32"
     cor_texto_botao = "white"
 
+    
+
     # título no topo
     tk.Label(
         janela,
         text="Sistema de Orçamentos",
-        font=fonte_titulo,
+        fonte_titulo = ("Arial", 16, "bold"),
         bg="#f5f5f5"
     ).pack(pady=20)
 
@@ -41,7 +52,7 @@ def iniciar_interface():
         font=fonte_botao,
         relief="flat",
         command=tela_cadastrar_empresa
-    ).pack(pady=5)
+    ).pack(pady=5) 
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
@@ -141,7 +152,7 @@ def iniciar_interface():
         command=janela.destroy
     ).pack(pady=5)
 
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=15)
 
     janela.mainloop()  # mantém a janela aberta
 
