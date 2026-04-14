@@ -1,4 +1,6 @@
 import tkinter as tk  # biblioteca para criar interface gráfica
+from PIL import Image, ImageTk
+import os
 
 from orcamento import formatar_numero, formatar_moeda
 # importa funções do seu sistema
@@ -15,11 +17,24 @@ def iniciar_interface():
     janela.geometry("400x500")
     janela.configure(bg="#f5f5f5")
 
-    # fontes e cores
-    fonte_titulo = ("Segoe UI", 18, "bold")
-    fonte_botao = ("Arial", 11)
-    cor_botao = "#2E7D32"
-    cor_texto = "white"
+    # caminho base
+    base_path = os.path.dirname(__file__)
+
+    # função para carregar ícones pequenos
+    def carregar_icone(nome):
+        caminho = os.path.join(base_path, "icons", nome)
+        img = Image.open(caminho)
+        img = img.resize((24, 24))
+        return ImageTk.PhotoImage(img)
+
+    # carregar ícones
+    icone_empresa = carregar_icone("empresa.png")
+    icone_cliente = carregar_icone("cliente.png")
+    icone_lista = carregar_icone("lista.png")
+    icone_orcamento = carregar_icone("orcamento.png")
+    icone_excluir = carregar_icone("excluir.png")
+    icone_pdf = carregar_icone("pdf.png")
+    icone_sair = carregar_icone("sair.png")
 
     # hover
     def on_enter(e):
@@ -28,45 +43,63 @@ def iniciar_interface():
     def on_leave(e):
         e.widget["bg"] = "#2E7D32"
 
+    # scroll
+    canvas = tk.Canvas(janela, bg="#f5f5f5")
+    scroll = tk.Scrollbar(janela, orient="vertical", command=canvas.yview)
+
+    frame = tk.Frame(canvas, bg="#f5f5f5", width=300)
+
+    frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
+
+    canvas.create_window((200, 0), window=frame, anchor="n")
+    canvas.configure(yscrollcommand=scroll.set)
+
+    canvas.pack(side="left", fill="both", expand=True)
+    scroll.pack(side="right", fill="y")
+
     # título
     tk.Label(
-        janela,
+        frame,
         text="Sistema de Orçamentos",
-        font=fonte_titulo,
+        font=("Segoe UI", 18, "bold"),
         bg="#f5f5f5"
     ).pack(pady=20)
 
-    # =========================
-    # BOTÕES
-    # =========================
-
-    def criar_botao(texto, comando):
+    # função padrão de botão
+    def criar_botao(texto, comando, icone):
         btn = tk.Button(
-            janela,
+            frame,
             text=texto,
+            image=icone,
+            compound="left",
             width=25,
-            bg=cor_botao,
-            fg=cor_texto,
-            font=fonte_botao,
+            padx=10,
+            bg="#2E7D32",
+            fg="white",
+            font=("Arial", 11),
             relief="flat",
+            anchor="w",
             command=comando
         )
         btn.pack(pady=5)
+
         btn.bind("<Enter>", on_enter)
         btn.bind("<Leave>", on_leave)
 
     # botões
-    criar_botao("Cadastrar Empresa", tela_cadastrar_empresa)
-    criar_botao("Cadastrar Cliente", tela_cadastrar_cliente)
-    criar_botao("Listar Clientes", tela_listar_clientes)
-    criar_botao("Criar Orçamento", tela_criar_orcamento)
-    criar_botao("Listar Orçamentos", tela_listar_orcamentos)
-    criar_botao("Excluir Orçamento", tela_excluir_orcamento)
-    criar_botao("Gerar PDF", tela_gerar_pdf)
-    criar_botao("Sair", janela.destroy)
+    criar_botao("Cadastrar Empresa", tela_cadastrar_empresa, icone_empresa)
+    criar_botao("Cadastrar Cliente", tela_cadastrar_cliente, icone_cliente)
+    criar_botao("Listar Clientes", tela_listar_clientes, icone_lista)
+    criar_botao("Criar Orçamento", tela_criar_orcamento, icone_orcamento)
+    criar_botao("Listar Orçamentos", tela_listar_orcamentos, icone_lista)
+    criar_botao("Excluir Orçamento", tela_excluir_orcamento, icone_excluir)
+    criar_botao("Gerar PDF", tela_gerar_pdf, icone_pdf)
+    criar_botao("Sair", janela.destroy, icone_sair)
 
-    # espaço final
-    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=15)
+    tk.Label(frame, text="", bg="#f5f5f5").pack(pady=15)
 
     janela.mainloop()
 
