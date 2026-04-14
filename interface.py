@@ -12,44 +12,136 @@ from tkinter import messagebox  # caixa de mensagem profissional
 def iniciar_interface():
 
     janela = tk.Tk()  # cria a janela principal
-    janela.title("Sistema de Orçamentos")  # título da janela
-    janela.geometry("400x500")  # tamanho da janela
+    janela.title("Sistema de Orçamentos")
+    janela.geometry("400x500")  # tamanho fixo
+    janela.configure(bg="#f5f5f5")  # fundo cinza claro
+    fonte_titulo = ("Arial", 16, "bold")
+    fonte_botao = ("Arial", 11)
+    cor_botao = "#2E7D32"
+    cor_texto_botao = "white"
 
     # título no topo
-    titulo = tk.Label(janela, text="Sistema de Orçamentos", font=("Arial", 16))
-    titulo.pack(pady=20)  # adiciona espaço
+    tk.Label(
+        janela,
+        text="Sistema de Orçamentos",
+        font=fonte_titulo,
+        bg="#f5f5f5"
+    ).pack(pady=20)
+
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão cadastrar empresa
-    btn_empresa = tk.Button(janela, text="Cadastrar Empresa", width=30, command=tela_cadastrar_empresa)
-    btn_empresa.pack(pady=5)
+    btn_empresa = tk.Button(
+        janela,
+        text="Cadastrar Empresa",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão cadastrar cliente
-    btn_cliente = tk.Button(janela, text="Cadastrar Cliente", width=30, command=tela_cadastrar_cliente)
-    btn_cliente.pack(pady=5)
+    btn_cliente = tk.Button(
+        janela,
+        text="Cadastrar Cliente",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão listar clientes
-    btn_listar_clientes = tk.Button(janela, text="Listar Clientes", width=30, command=tela_listar_clientes)
-    btn_listar_clientes.pack(pady=5)
+    btn_listar_clientes = tk.Button(
+        janela,
+        text="Listar Clientes",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão criar orçamento
-    btn_orcamento = tk.Button(janela, text="Criar Orçamento", width=30, command=tela_criar_orcamento)
-    btn_orcamento.pack(pady=5)
+    btn_orcamento = tk.Button(
+        janela,
+        text="Criar Orçamento",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão listar orçamentos
-    btn_listar_orc = tk.Button(janela, text="Listar Orçamentos", width=30, command=tela_listar_orcamentos)
-    btn_listar_orc.pack(pady=5)
+    btn_listar_orc = tk.Button(
+        janela,
+        text="Listar Orçamentos",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão excluir orçamento
-    btn_excluir = tk.Button(janela, text="Excluir Orçamento", width=30, command=tela_excluir_orcamento)
-    btn_excluir.pack(pady=5)
+    btn_excluir = tk.Button(
+        janela,
+        text="Excluir Orçamento",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão gerar PDF
-    btn_pdf = tk.Button(janela, text="Gerar PDF", width=30, command=tela_gerar_pdf)
-    btn_pdf.pack(pady=5)
+    btn_pdf = tk.Button(
+        janela,
+        text="Gerar PDF",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     # botão sair
-    btn_sair = tk.Button(janela, text="Sair", width=30, command=janela.destroy)
-    btn_sair.pack(pady=20)
+    btn_sair = tk.Button(
+        janela,
+        text="Sair",
+        width=25,
+        bg=cor_botao,
+        fg=cor_texto_botao,
+        font=fonte_botao,
+        relief="flat",
+        command=tela_cadastrar_cliente
+    ).pack(pady=5)
+
+    tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
     janela.mainloop()  # mantém a janela aberta
 
@@ -60,31 +152,37 @@ def tela_cadastrar_cliente():
     janela = tk.Toplevel()
     janela.title("Cadastrar Cliente")
     janela.geometry("300x300")
+    janela.configure(bg="#f5f5f5")
 
     # campo nome
     tk.Label(janela, text="Nome").pack()
     entry_nome = tk.Entry(janela)
     entry_nome.pack()
+    janela.configure(bg="#f5f5f5")
 
     # campo telefone
     tk.Label(janela, text="Telefone").pack()
     entry_telefone = tk.Entry(janela)
     entry_telefone.pack()
+    janela.configure(bg="#f5f5f5")
 
     # campo email
     tk.Label(janela, text="Email").pack()
     entry_email = tk.Entry(janela)
     entry_email.pack()
+    janela.configure(bg="#f5f5f5")
 
     # campo cnf/cnpj
     tk.Label(janela, text="CPF/CNPJ (opcional)").pack()
     entry_doc = tk.Entry(janela)
     entry_doc.pack()
+    janela.configure(bg="#f5f5f5")
 
     # campo endereço
     tk.Label(janela, text="Endereço").pack()
     entry_endereco = tk.Entry(janela)
     entry_endereco.pack()
+    janela.configure(bg="#f5f5f5")
 
     # função que salva os dados
     def salvar():
@@ -114,7 +212,14 @@ def tela_cadastrar_cliente():
         janela.destroy()  # fecha a janela
 
     # botão salvar
-    tk.Button(janela, text="Salvar", command=salvar).pack(pady=10)
+        tk.Button(
+            janela,
+            text="Salvar",
+            bg="#2E7D32",
+            fg="white",
+            relief="flat",
+            font=("Arial", 10, "bold")
+    ).pack(pady=10)
 
 # tela para listar clientes na interface
 def tela_listar_clientes():
@@ -127,6 +232,7 @@ def tela_listar_clientes():
     janela = tk.Toplevel()
     janela.title("Lista de Clientes")
     janela.geometry("400x400")
+    janela.configure(bg="#f5f5f5")
 
     tk.Label(janela, text="Clientes cadastrados", font=("Arial", 14)).pack(pady=10)
 
@@ -160,6 +266,7 @@ def tela_criar_orcamento():
     janela = tk.Toplevel()
     janela.title("Novo Orçamento")
     janela.geometry("500x500")
+    janela.configure(bg="#f5f5f5")
 
     # =========================
     # CLIENTE
@@ -324,7 +431,15 @@ def tela_criar_orcamento():
     entry_validade = tk.Entry(janela)
     entry_validade.pack()    
 
-    tk.Button(janela, text="Salvar Orçamento", command=salvar_orcamento).pack(pady=10)
+    tk.Button(
+        janela,
+        text="Salvar",
+        bg="#2E7D32",
+        fg="white",
+        relief="flat",
+        font=("Arial", 10, "bold"),
+        command=salvar_orcamento
+).pack(pady=10)
 
 # tela para listar orçamentos
 def tela_listar_orcamentos():
@@ -336,6 +451,7 @@ def tela_listar_orcamentos():
     janela = tk.Toplevel()
     janela.title("Orçamentos")
     janela.geometry("500x400")
+    janela.configure(bg="#f5f5f5")
 
     tk.Label(janela, text="Lista de Orçamentos", font=("Arial", 14)).pack(pady=10)
 
@@ -361,6 +477,7 @@ def tela_excluir_orcamento():
     janela = tk.Toplevel()
     janela.title("Excluir Orçamento")
     janela.geometry("500x400")
+    janela.configure(bg="#f5f5f5")
 
     tk.Label(janela, text="Selecione um orçamento", font=("Arial", 14)).pack(pady=10)
 
@@ -405,6 +522,7 @@ def tela_gerar_pdf():
     janela = tk.Toplevel()
     janela.title("Gerar PDF")
     janela.geometry("500x400")
+    janela.configure(bg="#f5f5f5")
 
     tk.Label(janela, text="Selecione um orçamento", font=("Arial", 14)).pack(pady=10)
 
@@ -454,6 +572,7 @@ def tela_cadastrar_empresa():
     janela = tk.Toplevel()
     janela.title("Cadastrar Empresa")
     janela.geometry("350x400")
+    janela.configure(bg="#f5f5f5")
 
     # campos
     tk.Label(janela, text="Nome da empresa").pack()
