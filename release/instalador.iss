@@ -3,20 +3,20 @@
 ; =========================
 
 #define MyAppName "Sistema de Orçamentos"        ; nome do sistema
-#define MyAppVersion "2.8.0"                     ; versão
+#define MyAppVersion "2.8.1"                     ; versão
 #define MyAppPublisher "Herik Engenharia"        ; seu nome/empresa
-#define MyAppExeName "SistemaOrcamento_v2.8.0.exe" ; nome do exe
+#define MyAppExeName "SistemaOrcamento_v2.8.1.exe" ; nome do exe
 
 [Setup]
 
-; ID único do sistema (pode manter esse)
+; ID único do sistema (NÃO DUPLICAR)
 AppId={{A1234567-B89C-1234-D567-123456789ABC}}
 
 ; nome e versão
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 
-; pasta padrão de instalação (Arquivos de Programas)
+; pasta de instalação
 DefaultDirName={autopf}\SistemaOrcamento
 
 ; nome no menu iniciar
@@ -25,31 +25,30 @@ DefaultGroupName=SistemaOrcamento
 ; nome do instalador gerado
 OutputBaseFilename=Instalador_SistemaOrcamento
 
-; onde salvar o instalador (mesma pasta do script)
+; onde salvar
 OutputDir=.
 
-; compressão (deixa leve)
+; compressão
 Compression=lzma
 SolidCompression=yes
 
 
 [Files]
 
-; 🔥 CAMINHO DO SEU EXE (MUITO IMPORTANTE)
-; ajuste se necessário
-Source: "release\SistemaOrcamento_v2.8.0.exe"; DestDir: "{app}"; Flags: ignoreversion
+; pega o .exe da mesma pasta
+Source: "{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 
 
 [Icons]
 
-; atalho no menu iniciar
-Name: "{group}\Sistema de Orçamentos"; Filename: "{app}\SistemaOrcamento_v2.8.0.exe"
+; atalho menu iniciar
+Name: "{group}\Sistema de Orçamentos"; Filename: "{app}\{#MyAppExeName}"
 
-; atalho na área de trabalho
-Name: "{commondesktop}\Sistema de Orçamentos"; Filename: "{app}\SistemaOrcamento_v2.8.0.exe"
+; atalho desktop
+Name: "{commondesktop}\Sistema de Orçamentos"; Filename: "{app}\{#MyAppExeName}"
 
 
 [Run]
 
-; executa o sistema após instalar
-Filename: "{app}\SistemaOrcamento_v2.8.0.exe"; Description: "Abrir sistema"; Flags: nowait postinstall skipifsilent
+; executa após instalar
+Filename: "{app}\{#MyAppExeName}"; Description: "Abrir sistema"; Flags: nowait postinstall skipifsilent

@@ -143,6 +143,19 @@ def iniciar_interface():
 
     tk.Label(janela, text="", bg="#f5f5f5").pack(pady=10)
 
+    # 🔥 importa versão do sistema
+    from versao import VERSAO
+
+    # 🔥 mostra versão no rodapé
+    tk.Label(
+        janela,
+        text=f"Versão {VERSAO}",
+        font=("Arial", 8),
+        bg="#f5f5f5",
+        fg="gray"
+    ).pack(side="bottom", pady=5)
+    
+
     janela.mainloop()  # mantém a janela aberta
 
 # tela para cadastrar cliente (100% gráfica)
